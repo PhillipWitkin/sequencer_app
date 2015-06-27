@@ -2,7 +2,7 @@ require 'sinatra'
 require 'sinatra/activerecord'
 require 'active_record'
 require 'json'
-require 'pry'
+# require 'pry'
 require 'bcrypt'
 
 # set :database, 'postgres://phillipwitkin@localhost/sequencer_sinatra'
