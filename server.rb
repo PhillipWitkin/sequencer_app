@@ -1,7 +1,7 @@
 require 'sinatra'
 require 'sinatra/activerecord'
 require 'active_record'
-require 'JSON'
+require 'json'
 require 'pry'
 require 'bcrypt'
 
