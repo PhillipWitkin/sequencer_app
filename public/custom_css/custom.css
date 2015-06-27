@@ -1,0 +1,23 @@
+.header-backing {
+  height: 220px;
+  background: url("equalizer.jpg");
+  /*background-color: grey;*/
+  background-size: cover;
+  background-position: center;
+  opacity: .7;
+  text-align: center;
+
+ }
+
+ h1 {
+  opacity: 1;
+  font-family: 'Lobster', cursive;
+  font-size: 120px;
+  color: black;
+
+ }
+
+.header-text {
+  
+
+}

@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<script src="./scripts/jquery-1.11.3.js"></script>
+  
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="./scripts/bootstrap/css/bootstrap.min.css">
+
+<!-- Optional theme -->
+<link rel="stylesheet" href="./scripts/bootstrap/css/bootstrap-theme.min.css">
+
+<!-- Latest compiled and minified JavaScript -->
+<script src="./scripts/bootstrap/js/bootstrap.min.js"></script>
+
+<link href='http://fonts.googleapis.com/css?family=Lobster' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" href="./custom_css/custom.css">
+
+  <meta charset="UTF-8">
+  <title>Sequence It</title>
+</head>
+<body>
+
+<header class="header-backing">
+  <h1 class="text-center header-text">Sequence It</h1>
+</header>
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+<!--     <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="#">Brand</a>
+    </div> -->
+
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+    <!--   <button type="button" class="btn btn-default navbar-btn">
+        <a href="/logout">Logout/Sign in as different User</a>
+      </button>   -->
+<!--       <ul class="nav navbar-nav">
+        <li class="active"><a href="#">Link <span class="sr-only">(current)</span></a></li>
+        <li><a href="/logout">Logout/Sign in as different user</a></li>
+      </ul> -->
+      <form class="navbar-form navbar-left" action="/login" method="Post">
+        <div class="form-group">
+          <input name="_method" type="hidden" value="delete" />
+        </div>
+        <button type="submit" class="btn btn-default">Logout/Sign in as different User</button>
+      </form>
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+
+<div class="container-fluid">
+
+  <div class="row" id="container">
+    <div class="col-md-11">
+      <div class="well">
+        <div id="keyboard"></div>
+      </div>
+    </div>  
+  </div>
+
+  <div class="row">
+
+    <div class="col-md-1"></div>
+    <div class="col-md-3">
+
+      <div class="btn-group" data-role="load-sequence">
+        <button type="button" class="btn">Load:</button>
+        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">MySequences
+          <span class="caret"></span>
+          <!-- <span class="sr-only">Toggle Dropdown</span> -->
+        </button>
+        <ul class="dropdown-menu" data-role="sequence-selector">
+          <script type="text/javascript" data-template="sequence-choice">
+            <li class="text-center" data-id={{id}} data-attr="sequence-list-item">
+              <button class="btn btn-default" data-action="select-sequence-item">{{sequence_name}}</button>
+            </li>
+            <li role="separator" class="divider"></li>
+          </script>
+<!--           <li class="text-center">Option 2</li>
+          <div><li class="text-center">Option 3</li></div> -->
+        </ul>
+      </div>
+
+    </div>    
+    
+    <div class="col-md-2" data-attr="sequence-label">
+      <div data-attr="default-label">
+        <span>No Sequence Loaded</span>
+      </div>
+
+      <script type="text/javascript" data-template="selected-label">
+        <div>
+          <strong>{{sequence_name}}</strong>
+        </div>
+      </script>
+
+    </div>
+
+    <div class="col-md-1"></div>
+
+    <div class"col-md-3">
+      <!-- <span class="text-center">Saving sequence stuff</span> -->
+      <div class="btn-group" data-role="save-sequence">
+        <button type="button" class="btn">Save Sequence:</button>
+        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Save as
+          <span class="caret"></span>
+          <!-- <span class="sr-only">Toggle Dropdown</span> -->
+        </button>
+        <ul class="dropdown-menu">
+          <li class="text-center">
+            <button class="btn btn-default" data-action="save-current-sequence">Save Current Sequence</button>
+          </li>
+          <li role="separator" class="divider"></li>
+          <li class="text-center">
+            <button class="btn btn-default">Save as New</button>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="row"><p></p></div>
+
+  <div class="row">
+    <div class="col-md-1"></div>
+    <div class="col-md-5">
+      <div class="well">
+        <div class="btn-toolbar" role="toolbar" data-control="sequence-control">
+          <div class="btn-group btn-group-justified" role="group" aria-label="s">
+            <div class="btn-group" role="group">
+              <button class="btn btn-default" type="button" data-action="play-sequence">
+                <span class="glyphicon glyphicon-play"></span>
+              </button> 
+            </div>
+            <div class="btn-group" role="group">
+              <button class="btn btn-default" type="button" data-action="stop-sequence">
+                <span class="glyphicon glyphicon-stop"></span>
+              </button>
+            </div>
+            <div class="btn-group" role="group">
+              <button class="btn btn-default" type="button" data-action="repeat-sequence">
+                <span class="glyphicon glyphicon-repeat"></span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="well" data-control="tempo-control">
+        <div class="row">
+          <div class="col-md-10"> 
+            <input type="range" min="40" max="260" data-action="tempo-slide">
+            <div class="input-group">
+              <span class="input-group-btn">
+                <button class="btn btn-default" data-action="set-tempo-input" type="button">Tempo:</button>
+              </span>
+              <input type="number" class="form-control" placeholder="120" data-action="tempo-input">
+              <span class="input-group-addon">bpm</span>
+            </div>
+          </div>
+          <div class="col-md-1">
+            <div data-attr="tempo-icon">
+              <p></p>
+              <span class="glyphicon glyphicon-time" aria-hidden="true"></span>
+            </div>
+          </div>
+        </div>
+      </div>  
+    </div>
+
+  </div>
+
+
+  <div class="row">
+
+    <div class="col-md-1"></div>
+
+    <div class="col-md-11">
+      <div class="btn-toolbar" role="toolbar" data-seqeunce="seqeunce_buttons">
+        <div class="btn-group btn-group-xs" role="group">
+
+          <div class="btn btn-default" data-sequence="1">
+            <button class="btn-default" data-sequence="S1"><span class="badge">1</span></button>
+          </div>
+
+          <div class="btn btn-default" data-sequence="2">
+            <button class="btn-default" data-sequence="S2"><span class="badge">2</span></button>
+          </div>
+
+          <div class="btn btn-default" data-sequence="3">
+            <button class="btn-default" data-sequence="S3"><span class="badge">3</span></button>
+          </div>
+
+          <div class="btn btn-default" data-sequence="4">
+            <button class="btn-default" data-sequence="S4"><span class="badge">4</span></button>
+          </div>
+
+          <div class="btn btn-default" data-sequence="5">
+            <button class="btn-default" data-sequence="S5"><span class="badge">5</span></button>
+          </div>
+
+          <div class="btn btn-default" data-sequence="6">
+            <button class="btn-default" data-sequence="S6"><span class="badge">6</span></button>
+          </div>
+
+          <div class="btn btn-default" data-sequence="7">
+            <button class="btn-default" data-sequence="S7"><span class="badge">7</span></button>
+          </div>
+
+          <div class="btn btn-default" data-sequence="8">
+            <button class="btn-default" data-sequence="S8"><span class="badge">8</span></button>
+          </div>
+
+          <div class="btn btn-default" data-sequence="9">
+            <button class="btn-default" data-sequence="S9"><span class="badge">9</span></button>
+          </div>
+
+          <div class="btn btn-default" data-sequence="10">
+            <button class="btn-default" data-sequence="S10"><span class="badge">10</span></button>
+          </div>
+
+          <div class="btn btn-default" data-sequence="11">
+            <button class="btn-default" data-sequence="S11"><span class="badge">11</span></button>
+          </div>
+
+          <div class="btn btn-default" data-sequence="12">
+            <button class="btn-default" data-sequence="S12"><span class="badge">12</span></button>
+          </div>
+
+          <div class="btn btn-default" data-sequence="13">
+            <button class="btn-default" data-sequence="S13"><span class="badge">13</span></button>
+          </div>
+
+          <div class="btn btn-default" data-sequence="14">
+            <button class="btn-default" data-sequence="S14"><span class="badge">14</span></button>
+          </div>
+
+          <div class="btn btn-default" data-sequence="15">
+            <button class="btn-default" data-sequence="S15"><span class="badge">15</span></button>
+          </div>
+
+          <div class="btn btn-default" data-sequence="16">
+            <button class="btn-default" data-sequence="S16"><span class="badge">16</span></button>
+          </div>
+          
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="row" data-role="note-form">
+
+    <script data-template="new-note-form">
+      <div class="col-md-1"></div>
+      <div class="form-horizontal" data-attr="note-input" data-sequence-value="sb_{{sequenceBlock}}">
+        <div class="col-md-offset-3 col-md-9">
+          <h4 class="text-left">Pitch and time for Sequencer Block {{sequenceBlock}}</h4>
+        </div>
+
+        <div class="form-group">
+          <label for="note" class="col-md-2 control-label">Note</label>
+          <div class="col-md-2">
+            <input type="text" class="form-control" id="note" data-id="note-val">
+          </div>
+
+          <label for="frequency" class="col-md-2 control-label">Frequency</label>
+          <div class="col-md-2">
+            <input type="number" class="form-control" id="frequency" data-id="frequency-val">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="time" class="col-md-offset-1 col-md-2 control-label">Time Length:</label>
+          <div class="col-md-2">
+            <input type="text" class="form-control" id="time" data-id="length-val" readonly>
+          </div>
+
+          <div class="col-md-2">
+            <div class="btn-group dropup" data-id="note-length">
+              <button class="btn btn-default btn-sm dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Note Length <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu">
+                <li class="text-center">
+                  <button class="btn btn-sm btn-default" data-attr="select-time" data-value="1/1">1 (Whole note)</button>
+                </li>
+                <li role="separator" class="divider"></li>
+
+                <li class="text-center">
+                  <button class="btn btn-sm btn-default" data-attr="select-time" data-value="1/2">1/2 (Half note)</button>
+                </li>
+                <li role="separator" class="divider"></li>
+
+                <li class="text-center">
+                  <button class="btn btn-sm btn-default" data-attr="select-time" data-value="1/4">1/4 (Quarter note)</button>              
+                </li>
+                <li role="separator" class="divider"></li>
+
+                <li class="text-center">
+                  <button class="btn btn-sm btn-default" data-attr="select-time" data-value="1/8">1/8 (Eigth note)</button>             
+                </li>
+                <li role="separator" class="divider"></li>
+
+                <li class="text-center">
+                  <button class="btn btn-sm btn-default" data-attr="select-time" data-value="1/16">1/16 (Sixteenth note)</button>
+                </li>
+              </ul>
+            </div>
+          </div> 
+
+          <div class="col-md-2">
+            <label class="radio-inline">
+              <input class="active" type="radio" name="inlineRadioOptions" data-id="select-sound" value="sound" autocomplete="off" {{soundStatus}}> Sound
+            </label>
+            <label class="radio-inline">
+              <input type="radio" name="inlineRadioOptions" data-id="select-rest" value="rest" autocomplete="off" {{restStatus}}> Rest
+            </label>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <div class="col-md-offset-4 col-md-3">
+          <button class="btn btn-block btn-lg btn-default" data-action="set-block">Set Note Values</button>
+          </div>
+        </div>
+      </div>
+    </script> 
+
+  </div>
+
+</div>
+
+</body>
+
+<script type="text/javascript" src="./scripts/underscore.js"></script>
+<script type="text/javascript" src="./scripts/backbone.js"></script>
+<script type="text/javascript" src="./scripts/mustache.js"></script>
+<script src="./scripts/qwerty-hancock.js"></script>
+<script src="./sound.js"></script>
+<script src="./app.js"></script>
+
+</html>   

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="./scripts/jquery-1.11.3.js"></script>
+    
+  <!-- Latest compiled and minified CSS -->
+  <link rel="stylesheet" href="./scripts/bootstrap/css/bootstrap.min.css">
+
+  <!-- Optional theme -->
+  <link rel="stylesheet" href="./scripts/bootstrap/css/bootstrap-theme.min.css">
+
+  <!-- Latest compiled and minified JavaScript -->
+  <script src="./scripts/bootstrap/js/bootstrap.min.js"></script>
+
+  <link href='http://fonts.googleapis.com/css?family=Lobster' rel='stylesheet' type='text/css'>
+  <link rel="stylesheet" href="./custom_css/custom.css">
+
+  <meta charset="UTF-8">
+  <title>Sequence It Login</title>
+</head>
+<body>
+  <header class="header-backing">
+    <h1 class="text-center header-text">Sequence It</h1>
+  </header>
+
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+    <!--   <button type="button" class="btn btn-default navbar-btn">
+        <a href="/logout">Logout/Sign in as different User</a>
+      </button>   -->
+      <ul class="nav navbar-nav">
+        <!-- <li class="active"><a href="/new_user">Create New Username <span class="sr-only">(current)</span></a></li> -->
+        <li><a href="/login">Sign in as different user</a></li>
+      </ul>
+
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+
+  <h3 class="text-center"> Welcome to Sequence It!</h3>
+  <h4 class="text-center">You're well on your way</h3>  
+
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <div clss="well">
+          <div class="row">
+            <div class="col-xs-3 col-md-3"></div>
+            <div class="col-xs-6 col-md-5">
+              <!-- <div class="well"> --> 
+                <% if @message %>
+                  <p><%= @message %></p>
+                <% end %>
+              <!-- </div>         -->
+            </div>           
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+    <div class="row">
+      <div class="col-xs-4 col-md-3"></div>
+      <div class="col-xs-6 col-md-5">
+        <form action="/new_user" method="Post">
+          <div class="form-group">
+            <label for="username">Choosse your Username:</label>
+            <input type="text" name="username" class="form-control" id="username" placeholder="Enter username">
+          </div>
+          <div class="form-group">
+            <label for="password">And Your Password...</label>
+            <input type="text" name="password" class="form-control" id="password" placeholder="Password">
+          </div>
+          <button type="submit" class="btn btn-default">Create Username</button>
+        </form>
+      </div>
+    </div> 
+      
+  </div>
+
+
+    
+</body>
+</html>
