@@ -2,7 +2,7 @@ require 'sinatra'
 require 'sinatra/activerecord'
 require 'active_record'
 require 'json'
-require 'pry'
+# require 'pry'
 require 'bcrypt'
 
 # set :database, 'postgres://phillipwitkin@localhost/sequencer_sinatra'
@@ -336,7 +336,7 @@ end
 put ('/api/sequences/:id') do
   content_type :json
   changing_sequence = Sequence.find(params[:id])
-  binding.pry
+
   changing_sequence.update(
     sb_1_pitch: params[:sb_1_pitch],
     sb_1_duration: params[:sb_1_duration],
