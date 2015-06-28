@@ -130,6 +130,7 @@ var SaveSequenceView = Backbone.View.extend({
     var stringifiedModel = _.mapObject(modelWithoutId, function(val, key){
       return val.toString()
     })
+    console.log(stringifiedModel)
     $.ajax({
       method: "POST",
       url: 'api/sequences',
