@@ -57,36 +57,80 @@ var SequenceLoadSelectionView = Backbone.View.extend({
     sequence1.fetch()
     selectedSequenceId = this.model.get('id')
     console.log("clicked to load sequence " + selectedSequenceId)
-    sequenceLabelView.model = sequence1
-    sequenceLabelView.reset()
-    sequenceLabelView.render()
-
-    for(x=1; x < 16; x++){
-      $('[data-sequence="'+ x + '"]').removeClass('active')
-    }
-
-    noteForm.model = sequence1
-    noteForm.close()
-    sequenceControlView.model = sequence1
-    s1BlockView.model = sequence1
-    s2BlockView.model = sequence1
-    s3BlockView.model = sequence1
-    s4BlockView.model = sequence1
-    s5BlockView.model = sequence1
-    s6BlockView.model = sequence1
-    s7BlockView.model = sequence1
-    s8BlockView.model = sequence1
-    s9BlockView.model = sequence1
-    s10BlockView.model = sequence1
-    s11BlockView.model = sequence1
-    s12BlockView.model = sequence1
-    s13BlockView.model = sequence1
-    s14BlockView.model = sequence1
-    s15BlockView.model = sequence1
-    s16BlockView.model = sequence1
-    saveSequenceView.model = sequence1
+    loadNewModel(sequence1, "loadMenu")
   } 
 })
+
+  //when called by clicking a sequence from the load menu, this will be called using a model associated with that view 
+  //but if called after a new sequence is saved, the argument will have a value from the newly created model
+function loadNewModel(newModelData, source){
+  if (source === "saveNew"){
+    var sequence1 = new Sequence(newModelData)
+    console.log(sequence1)  
+  }else if (source === "loadMenu"){
+    var sequence1 = newModelData
+  } 
+  sequenceLabelView.model = sequence1
+  sequenceLabelView.reset()
+  sequenceLabelView.render()
+
+  for(x=1; x < 16; x++){
+    $('[data-sequence="'+ x + '"]').removeClass('active')
+  }
+
+  noteForm.model = sequence1
+  noteForm.close()
+  sequenceControlView.model = sequence1
+  s1BlockView.model = sequence1
+  s2BlockView.model = sequence1
+  s3BlockView.model = sequence1
+  s4BlockView.model = sequence1
+  s5BlockView.model = sequence1
+  s6BlockView.model = sequence1
+  s7BlockView.model = sequence1
+  s8BlockView.model = sequence1
+  s9BlockView.model = sequence1
+  s10BlockView.model = sequence1
+  s11BlockView.model = sequence1
+  s12BlockView.model = sequence1
+  s13BlockView.model = sequence1
+  s14BlockView.model = sequence1
+  s15BlockView.model = sequence1
+  s16BlockView.model = sequence1
+  saveSequenceView.model = sequence1
+}
+
+var SequenceLoadCollection = Backbone.Collection.extend({
+  url: '/api/sequences',
+  model: Sequence
+})
+
+var SequenceLoadCollectionView = Backbone.View.extend({
+  initialize: function(){
+    this.collection.fetch()
+    this.listenTo(this.collection, 'add', this.addSequence)
+    // this.render()
+  },
+
+  addSequence: function(sequenceFromCollection){
+    var newSequenceLoadSelectionView = new SequenceLoadSelectionView({
+      model: sequenceFromCollection
+    })
+    newSequenceLoadSelectionView.render()
+    this.$el.append(newSequenceLoadSelectionView.$el)
+  }
+
+  //called after a new sequence is saved
+  // loadNewSavedSequence: function(newModel){
+  //   var newSequenceId = newModel.id
+  //   console.log(newSequenceId)
+  //   newModelFromCollection = loadSequenceCollection.get(newSequenceId)
+  //   console.log(newModelFromCollection)
+  //   loadNewModel(newModelFromCollection) 
+  // }
+
+})
+
 
 var SaveSequenceView = Backbone.View.extend({
 
@@ -140,31 +184,12 @@ var SaveSequenceView = Backbone.View.extend({
       $('#save_sequence_modal').modal('hide')
       loadSequenceCollection.fetch()
       // sequenceLabelView.render()
+      // loadSequenceCollectionView.loadNewSavedSequence(data)
+      loadNewModel(data, "saveNew")
     })
   }
 })
 
-var SequenceLoadCollection = Backbone.Collection.extend({
-  url: '/api/sequences',
-  model: Sequence
-})
-
-var SequenceLoadCollectionView = Backbone.View.extend({
-  initialize: function(){
-    this.collection.fetch()
-    this.listenTo(this.collection, 'add', this.addSequence)
-    // this.render()
-  },
-
-  addSequence: function(sequenceFromCollection){
-    var newSequenceLoadSelectionView = new SequenceLoadSelectionView({
-      model: sequenceFromCollection
-    })
-    newSequenceLoadSelectionView.render()
-    this.$el.append(newSequenceLoadSelectionView.$el)
-  }
-
-})
 
 
 
