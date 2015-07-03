@@ -52,6 +52,7 @@ var SequenceLoadSelectionView = Backbone.View.extend({
     'click button[data-action="select-sequence-item"]': 'setSequence'
   },
 
+  //will be triggered from clicking any of the views associated with each model in the collection of sequences
   setSequence: function(){
     var sequence1 = this.model
     sequence1.fetch()
@@ -69,15 +70,17 @@ function loadNewModel(newModelData, source){
     console.log(sequence1)  
   }else if (source === "loadMenu"){
     var sequence1 = newModelData
-  } 
+  }
+  //re-sets the new sequence1 to be the model for the label
   sequenceLabelView.model = sequence1
+  //re-render the view for the name label so correct name appears
   sequenceLabelView.reset()
   sequenceLabelView.render()
-
+  //make sure all the sequencer blocks are clear
   for(x=1; x < 16; x++){
     $('[data-sequence="'+ x + '"]').removeClass('active')
   }
-
+  //re-sets sequence1 as the model for all other related views
   noteForm.model = sequence1
   noteForm.close()
   sequenceControlView.model = sequence1
@@ -113,9 +116,11 @@ var SequenceLoadCollectionView = Backbone.View.extend({
   },
 
   addSequence: function(sequenceFromCollection){
+    //create a new view for the new model
     var newSequenceLoadSelectionView = new SequenceLoadSelectionView({
       model: sequenceFromCollection
     })
+    //render it and append it to the dom
     newSequenceLoadSelectionView.render()
     this.$el.append(newSequenceLoadSelectionView.$el)
   }
@@ -240,9 +245,12 @@ var SequencerControlView = Backbone.View.extend({
       "sb_16_pitch", 
       "sb_16_duration"
       )
+    //make operations easier by first converting the object into an array
     var sequenceArray = _.pairs(sequenceObject)
 
     // console.log(sequenceArray)
+
+    //convert the array back to an object with a structure easy for the sequencer to read
     for (b = 0; b < 32; b+=2){
       console.log(b)
       var blockPitch = sequenceArray[b]
@@ -298,24 +306,29 @@ var SequenceBlockView = Backbone.View.extend({
   },
 
   getNote: function(){
+    //check to make sure sequence is not playing
     if (sequenceContinue === false){
+      //this applies to views for all 16 blocks, so first check which block  
       blockNumber = parseInt(this.$el.attr('data-sequence'))
       console.log("sequencer button clicked " + blockNumber)
       this.$el.addClass("active")
+      //create variables which stand in for a string equivalent to the keys in the model's attributes related to the relavent block
       pitchBlockKey = "sb_" + blockNumber + "_pitch"
       durationBlockKey = "sb_" + blockNumber + "_duration"
       noteBlockKey = "sb_" + blockNumber + "_note"
+      // use these to retrieve the note information (pitch, duration, and note) from the sequence model
       blockPitch = parseInt(this.model.get(pitchBlockKey))
-      // blockDurationFunc = function(){
+      // convert the duration for this block into an actual millisecond value
         testDuration = this.model.get(durationBlockKey).split('/') 
         actualDruation = (parseInt(testDuration[0])/parseInt(testDuration[1])) * 4 * (1000 / (sequencerTempo / 60)) 
-      //   return actualDruation
-      // }
+  
       blockDuration = actualDruation
       console.log(blockDuration)
       blockNote = this.model.get(noteBlockKey) 
       console.log(blockPitch)
+      //send these values to play a single note
       testNote(blockPitch, blockDuration)
+      //animate the sequence block
       el = this.$el
       this.$el.animate({
         top: "+=30"
@@ -326,8 +339,6 @@ var SequenceBlockView = Backbone.View.extend({
       })
       
       noteForm.render(blockNumber)
-      // var S1note = myKeyboard.keyDown 
-      // console.log(S1note)
     }
   }
 })
@@ -350,8 +361,6 @@ var NoteFormView = Backbone.View.extend({
   template: $('[data-template="new-note-form"]').text(),
 
   render: function(blockNumber){
-    // this.$el.empty()
-    // this.close()
 
     //since this form applies to 1 of 16 different blocks, we use the blockNunber to determine what values from the sequence model we wang
     var blockFrequency =  this.model.get("sb_" + blockNumber + "_pitch")
@@ -395,28 +404,35 @@ var NoteFormView = Backbone.View.extend({
 
   setNote: function(event){
     event.preventDefault()
+    //just like in the render function, this will be used to set note values for one of 16 possible sequence blocks
+    //uses a similar technique - first define the keys in the model's attributes for whichever block
     blockNumber = $('[data-attr="note-input"]').attr('data-sequence-value')
     console.log("setting note for " + blockNumber)
     blockKeyPitch = blockNumber + "_pitch"
     blockKeyNote = blockNumber + "_note"
     blockKeyDuration = blockNumber + "_duration"
 
+    //grab the new values from the dom
     newPitch = $('input[data-id="frequency-val"]').val()
     newNote = $('input[data-id="note-val"]').val()
     newDuration = $('input[data-id="length-val"]').val()
 
+    //create a "dummby" object which has its key and value reversed; the pitch is used as the key with a value as the appropriate key in the model's attributes
     dummbyPitchObject = {pitchToBe: blockKeyPitch}
+    //swap the key and value
     properPitchKeys = _.invert(dummbyPitchObject)
+    //assign the new value to be pitch
     pitchObject = _.mapObject(properPitchKeys, function(val, key){
       return val = newPitch
     })
 
+    //exact same technique as above but done again for note 
     dummbyNoteObject = {noteToBe: blockKeyNote}
     properNoteKeys = _.invert(dummbyNoteObject)
     noteObject = _.mapObject(properNoteKeys, function(val, key){
       return val = newNote
     })
-
+    //and again for duration
     dummbyDurationObject = {durationToBe: blockKeyDuration}
     properDurationKeys = _.invert(dummbyDurationObject)
     durationObject = _.mapObject(properDurationKeys, function(val, key){
@@ -489,8 +505,8 @@ var TempoSelectView = Backbone.View.extend({
   }
 })
 
+//controls animation of the tempo icon
 function animateBeat(){
-  // console.log("beat")
   var beatLength = (1000 / (sequencerTempo / 60)) - 100
   self = $('[data-attr="tempo-icon"]')
   self.fadeOut(beatLength/2, function(){
@@ -595,13 +611,7 @@ var s16BlockView = new SequenceBlockView({
 
 
 
-function testNote(pitch, duration){
-                  
-            // duration = sequence1.get(durationBlockKey)
-            // pitch = sequence1.get(pitchBlockKey)
-
-            // pitch = sequence[i].pitch
-            // duration  = sequence[i].duration
+function testNote(pitch, duration){                
             
     console.log(pitch)
     console.log(duration)
