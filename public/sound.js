@@ -206,25 +206,12 @@ var repeat  = false
 
 var playedNote = []
 var playedFrequency = []
-var maxVolume = .5
+var maxVolume = 1
+
 myKeyboard.keyDown = function (note, frequency){
   console.log(note)
   console.log(frequency)
     
-
-  // oscillator.connect(vca);
-  // vca.connect(context.destination)
-
-  // vca.volumegain.value = 1
-  var $slider = $('input[data-type="volume"]') 
-  $slider.on('click', function(e){
-    console.log($slider.val())
-    maxVolume = parseInt($slider.val())/100
-    console.log(maxVolume)
-    // vca.volume.gain.value = maxVolume
-  })
-  // LFO.setFrequency(frequency/100)
-  // oscillator.oscillator.frequency.value = frequency
   oscillator.setFrequency(frequency)
   oscillator2.setFrequency(frequency * 2)
   oscillator3.setFrequency(frequency)

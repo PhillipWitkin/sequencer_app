@@ -610,7 +610,7 @@ var s16BlockView = new SequenceBlockView({
 
 
 
-//used when user manually plays nots on keyboard
+//used when user clicks a sequence block
 function testNote(pitch, duration){                
             
     console.log(pitch)
