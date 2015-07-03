@@ -644,7 +644,7 @@ function testNote(pitch, duration){
               oscillator3.setFrequency(pitch)
               EG.triggerOn(1, duration)
             }else {
-              EG.gateOff()
+              // EG.gateOff() //if the note is rest, do nothing-EG.off creates a 'blip'
             }
             // animate current sequence block
             var noteLength = duration
