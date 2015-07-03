@@ -59,7 +59,7 @@ var VCA = (function(context) {
 var EnvelopeGenerator = (function(context) {
   function EnvelopeGenerator(){
     this.attackTime = .2;
-    this.releaseTime = .5;
+    this.releaseTime = .4;
 
   };
 
@@ -127,7 +127,7 @@ oscillator3.oscillator.type = "triangle"
 
 //LFO controlling primary oscillator
 var LFO = new VCO
-LFO.oscillator.type = "sine"
+LFO.oscillator.type = "triangle"
 
 //LFO controlling frequency of primary amp
 var LFOamp = new VCO
