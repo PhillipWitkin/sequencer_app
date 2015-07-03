@@ -1,5 +1,5 @@
 // var currentSequence = []
-var sequenceContinue = true
+var sequenceContinue = false
 var sequenceRepeat = false
 var sequencerTempo = 120
 var tempoAnimateId
@@ -298,35 +298,37 @@ var SequenceBlockView = Backbone.View.extend({
   },
 
   getNote: function(){
-    blockNumber = parseInt(this.$el.attr('data-sequence'))
-    console.log("sequencer button clicked " + blockNumber)
-    this.$el.addClass("active")
-    pitchBlockKey = "sb_" + blockNumber + "_pitch"
-    durationBlockKey = "sb_" + blockNumber + "_duration"
-    noteBlockKey = "sb_" + blockNumber + "_note"
-    blockPitch = parseInt(this.model.get(pitchBlockKey))
-    // blockDurationFunc = function(){
-      testDuration = this.model.get(durationBlockKey).split('/') 
-      actualDruation = (parseInt(testDuration[0])/parseInt(testDuration[1])) * 4 * (1000 / (sequencerTempo / 60)) 
-    //   return actualDruation
-    // }
-    blockDuration = actualDruation
-    console.log(blockDuration)
-    blockNote = this.model.get(noteBlockKey) 
-    console.log(blockPitch)
-    testNote(blockPitch, blockDuration)
-    el = this.$el
-    this.$el.animate({
-      top: "+=30"
-    }, blockDuration/2, function(){
-      el.animate({
-        top: "-=30"
-      }, blockDuration/2)
-    })
-    
-    noteForm.render(blockNumber)
-    // var S1note = myKeyboard.keyDown 
-    // console.log(S1note)
+    if (sequenceContinue === false){
+      blockNumber = parseInt(this.$el.attr('data-sequence'))
+      console.log("sequencer button clicked " + blockNumber)
+      this.$el.addClass("active")
+      pitchBlockKey = "sb_" + blockNumber + "_pitch"
+      durationBlockKey = "sb_" + blockNumber + "_duration"
+      noteBlockKey = "sb_" + blockNumber + "_note"
+      blockPitch = parseInt(this.model.get(pitchBlockKey))
+      // blockDurationFunc = function(){
+        testDuration = this.model.get(durationBlockKey).split('/') 
+        actualDruation = (parseInt(testDuration[0])/parseInt(testDuration[1])) * 4 * (1000 / (sequencerTempo / 60)) 
+      //   return actualDruation
+      // }
+      blockDuration = actualDruation
+      console.log(blockDuration)
+      blockNote = this.model.get(noteBlockKey) 
+      console.log(blockPitch)
+      testNote(blockPitch, blockDuration)
+      el = this.$el
+      this.$el.animate({
+        top: "+=30"
+      }, blockDuration/2, function(){
+        el.animate({
+          top: "-=30"
+        }, blockDuration/2)
+      })
+      
+      noteForm.render(blockNumber)
+      // var S1note = myKeyboard.keyDown 
+      // console.log(S1note)
+    }
   }
 })
 
@@ -665,6 +667,7 @@ function testNote(pitch, duration){
           setTimeout(playSequence, noteLength) 
         }
       }else {
+        sequenceContinue = false
         return "complete"
       }
     }
