@@ -610,7 +610,7 @@ var s16BlockView = new SequenceBlockView({
 
 
 
-
+//used when user manually plays nots on keyboard
 function testNote(pitch, duration){                
             
     console.log(pitch)
@@ -621,11 +621,11 @@ function testNote(pitch, duration){
     oscillator3.setFrequency(pitch)
 
     EG.triggerOn(1, duration)
-            // EGosc3.triggerOn(10, duration)
+            // EGosc3.triggerOn(500, duration)
 
 }
 
-
+//main sequence function
     function playSequence(){
 
       function playNote(sequence, i){

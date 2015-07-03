@@ -123,14 +123,20 @@ var myKeyboard = new QwertyHancock({
 var oscillator = new VCO
 var oscillator2 = new VCO
 var oscillator3 = new VCO
+oscillator3.oscillator.type = "triangle"
 
 //LFO controlling primary oscillator
 var LFO = new VCO
+LFO.oscillator.type = "sine"
+
+//LFO controlling frequency of primary amp
 var LFOamp = new VCO
+LFOamp.oscillator.type = "sine"
 var LFOfilter = new VCO
 
 var LFOgain = new VCA
 var LFOampGain = new VCA
+var LFOampGainGate = new VCA
 var LFOfilterGain = new VCA
 
 var EGosc3Gain = new VCA
@@ -144,26 +150,31 @@ var vca = new VCA;
 var EG = new EnvelopeGenerator
 var EGfiler = new EnvelopeGenerator
 var EGosc3 = new EnvelopeGenerator
+EGosc3.attackTime = 2
 
 
 LFO.oscillator.frequency.value = 5
 LFO.connect(LFOgain.volume)//connect LFO to gain 
 LFOgain.connect(oscillator2.oscillator.frequency)//route LFO to modulate oscillator2 pitch 
-LFOgain.volume.gain.value = 10 //gain for LFO
+LFOgain.volume.gain.value = 8 //gain for LFO
 
-EGosc3.connect(EGosc3Gain.amplitude)
-EGosc3Gain.connect(EGosc3Level.volume)
-EGosc3Level.volume.gain.value = 50
-EGosc3Level.connect(oscillator3.oscillator.frequency)
+// EGosc3.connect(EGosc3Gain.volume)
+// EGosc3Gain.volume.gain.value = 50
+// EGosc3Gain.connect(EGosc3Level.amplitude)
+// EGosc3Level.volume.gain.value = 100
+// EGosc3Level.connect(oscillator3.oscillator.frequency)
 
 oscillator.connect(vca.volume)//connect oscillator to amplifier
 oscillator2.connect(vca.volume)//connect oscillator2 to amplifier
 oscillator3.connect(vca.volume)
 // vca.volume.gain.value = 0
-LFOamp.oscillator.frequency.value = 8
-LFOamp.connect(LFOampGain.volume)
-LFOampGain.volume.gain.value = 0
-LFOampGain.connect(vca.amplitude)
+// LFOamp.oscillator.frequency.value = 2 
+// LFOamp.connect(LFOampGain.volume) //route LFOamp to LFOampGainMod
+// LFOampGain.volume.gain.value = 5 //set LFOampGain
+// LFOampGain.connect(LFOampGainGate.volume)
+// EG.connect(LFOampGainGate.amplitude)//routing to try and make sure EG gates the LFOamp, and the amp stays off unless the EG is active 
+// LFOampGainGate.volume.gain.value = 0
+// LFOampGainGate.connect(vca.amplitude) //route LFOampGain to the primary amp
 EG.connect(vca.amplitude)//route EG to modulate amplifier
 vca.connect(context.destination)//connect amp to end
 
@@ -190,20 +201,6 @@ var i = 0
 var repeat  = false
 
 
-
-
-// setInterval(playSequence, 1000)
-
-// playSequence()
-
-var n = 0
-function tester(){
-  console.log("eek")
-  setTimeout(tester, 100*n)
-  n = n + 1
-}
-
-// tester()
 
 
 
