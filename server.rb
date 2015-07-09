@@ -10,6 +10,13 @@ require './config/environments'
 
 class Sequence < ActiveRecord::Base
   belongs_to :user
+
+  validates :sequence_name, presence: true
+  # validates :sequence_name, uniqueness: true, if: :sequence_name_for_user_already_taken?
+
+  # def sequence_name_for_user_already_taken?
+  #   Sequence.user_id == current_user[:id] 
+  # end
 end
 
 class User < ActiveRecord::Base
@@ -304,7 +311,7 @@ get ('/logout') do
 end
 
 
-
+#main page
 get ('/') do
   if logged_in?
     # index = File.read("./public/static_views/main.html")
@@ -316,7 +323,7 @@ get ('/') do
   end
 end
 
-
+#all sequences for a user
 get ('/api/sequences') do
   content_type :json
 
@@ -327,12 +334,14 @@ get ('/api/sequences') do
 
 end
 
+#one sequence belonging to the user to load
 get ('/api/sequences/:id') do
   content_type :json
   sequence = Sequence.find(params[:id])
   sequence.to_json
 end
 
+#save the currently loaded sequence
 put ('/api/sequences/:id') do
   content_type :json
   changing_sequence = Sequence.find(params[:id])
@@ -407,6 +416,7 @@ put ('/api/sequences/:id') do
   changing_sequence.to_json
 end
 
+#save the current sequence under a new title
 post ('/api/sequences') do
   content_type :json
   new_sequence = Sequence.new(
@@ -477,6 +487,7 @@ post ('/api/sequences') do
     sb_16_duration: params[:sb_16_duration],
     sb_16_note: params[:sb_16_note]
   )
-  new_sequence.save
-  new_sequence.to_json
+  if new_sequence.save
+    new_sequence.to_json
+  end
 end
