@@ -1,3 +1,9 @@
+html, body {
+  padding: 0px;
+  margin: 0px;
+}
+
+
 .header-backing {
   height: 220px;
   background: url("equalizer.jpg");
@@ -24,4 +30,9 @@
 
 #space-below-sequence-blocks {
   height: 20px;
+}
+
+#bgmain{
+  /*background: linear-gradient(90deg, rgba(0,0,0,.7), rgba(0,0,0,.5), rgba(0.8,0.8,0.8,.5), rgba(0,0,0,.5), rgba(0,0,0,.7));*/
+  background: linear-gradient(270deg, white, rgba(50, 50, 50, .3), white);
 }
