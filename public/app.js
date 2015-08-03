@@ -675,10 +675,10 @@ function testNote(pitch, duration){
           // var noteLength = duration + 1000*EG.attackTime + 1000*EG.releaseTime
           var noteLength = duration
           setTimeout(playSequence, noteLength) 
+        }else {
+          sequenceContinue = false
+          return "complete"
         }
-      }else {
-        sequenceContinue = false
-        return "complete"
       }
     }
 
