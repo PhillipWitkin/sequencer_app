@@ -209,8 +209,8 @@ var repeat  = false
 var playedNote = []
 var playedFrequency = []
 var maxVolume = 1
-var keytimeDown
-var keytimeUp
+// var keytimeDown
+// var keytimeUp
 
 myKeyboard.keyDown = function (note, frequency){
   console.log(note)
@@ -219,7 +219,7 @@ myKeyboard.keyDown = function (note, frequency){
   oscillator.setFrequency(frequency)
   oscillator2.setFrequency(frequency * 2)
   oscillator3.setFrequency(frequency)
-  keytimeDown = EG.gateOn(maxVolume)
+  EG.gateOn(maxVolume)
   // console.log(keytimeDown)
   playedNote.push({key: note, pitch: frequency}) 
   // playedFrequency.push(frequency) 
@@ -229,7 +229,7 @@ myKeyboard.keyUp = function (note, frequency){
   // vca.disconnect(context.destination)
   // vca.gain.value = 0
   // oscillator.oscillator.disconnect(vca)
-  keytimeUp = EG.gateOff()
+  EG.gateOff()
   // console.log(keytimeUp)
   
 }
