@@ -79,12 +79,14 @@ var EnvelopeGenerator = (function(context) {
     this.param.cancelScheduledValues(now);
     this.param.setValueAtTime(0, now);
     this.param.linearRampToValueAtTime(maxVolume, now + this.attackTime);
+    return context.currentTime
   };
 
   EnvelopeGenerator.prototype.gateOff = function() {
     console.log("EG gate off")
     now = context.currentTime
-    this.param.setTargetAtTime(0, now, this.releaseTime)
+    this.param.setTargetAtTime(0, now + 0.3, this.releaseTime)
+    return context.currentTime
   }
 
   EnvelopeGenerator.prototype.connect = function(param) {
@@ -207,6 +209,8 @@ var repeat  = false
 var playedNote = []
 var playedFrequency = []
 var maxVolume = 1
+var keytimeDown
+var keytimeUp
 
 myKeyboard.keyDown = function (note, frequency){
   console.log(note)
@@ -215,7 +219,8 @@ myKeyboard.keyDown = function (note, frequency){
   oscillator.setFrequency(frequency)
   oscillator2.setFrequency(frequency * 2)
   oscillator3.setFrequency(frequency)
-  EG.gateOn(maxVolume)
+  keytimeDown = EG.gateOn(maxVolume)
+  // console.log(keytimeDown)
   playedNote.push({key: note, pitch: frequency}) 
   // playedFrequency.push(frequency) 
 }
@@ -224,7 +229,11 @@ myKeyboard.keyUp = function (note, frequency){
   // vca.disconnect(context.destination)
   // vca.gain.value = 0
   // oscillator.oscillator.disconnect(vca)
-  EG.gateOff()
+  keytimeUp = EG.gateOff()
+  // console.log(keytimeUp)
   
 }
+
+
+
 
