@@ -13,11 +13,13 @@ require './config/environments'
 class Sequence < ActiveRecord::Base
   belongs_to :user
 
-  validates :sequence_name, presence: true
-  # validates :sequence_name, uniqueness: true, if: :sequence_name_for_user_already_taken?
+  # attr_reader :user_id
 
-  # def sequence_name_for_user_already_taken?
-  #   Sequence.user_id == current_user[:id] 
+  validates :sequence_name, presence: true
+  # validates :sequence_name, uniqueness: true, if: :sequence_belongs_to_current_user?
+
+  # def sequence_belongs_to_current_user?
+  #   :user_id == current_user[:id] 
   # end
 end
 
