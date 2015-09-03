@@ -1,4 +1,6 @@
 require 'sinatra'
+#Let's try this to make Heroku happy
+set :database_file, "./config/database.yml"
 require 'sinatra/activerecord'
 require 'active_record'
 require 'json'
@@ -6,8 +8,6 @@ require 'json'
 require 'bcrypt'
 
 # set :database, 'postgres://phillipwitkin@localhost/sequencer_sinatra'
-#Let's try this to make Heroku happy
-set :database_file, "./config/database.yml"
 require './config/environments'
 
 class Sequence < ActiveRecord::Base
