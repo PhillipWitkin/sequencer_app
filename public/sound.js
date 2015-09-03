@@ -85,7 +85,7 @@ var EnvelopeGenerator = (function(context) {
   EnvelopeGenerator.prototype.gateOff = function() {
     console.log("EG gate off")
     now = context.currentTime
-    this.param.setTargetAtTime(0, now + 0.3, this.releaseTime)
+    this.param.setTargetAtTime(0, now + 0.5, this.releaseTime)
     return context.currentTime
   }
 
