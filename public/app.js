@@ -174,6 +174,7 @@ var SaveSequenceView = Backbone.View.extend({
     // console.log("save new sequence button clicked")
     var newName = $('input[data-attr="new-sequence-name"]').val()
     console.log(newName)
+    // var self = this
     this.model.set({sequence_name: newName})
     var modelWithoutId = _.omit(this.model.attributes, 'id')
     var stringifiedModel = _.mapObject(modelWithoutId, function(val, key){

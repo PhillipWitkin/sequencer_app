@@ -424,6 +424,7 @@ end
 #save the current sequence under a new title
 post ('/api/sequences') do
   content_type :json
+  if current_user[:username] != 'guest'
   new_sequence = Sequence.new(
     user_id: current_user[:id],
     sequence_name: params[:sequence_name],
@@ -492,7 +493,9 @@ post ('/api/sequences') do
     sb_16_duration: params[:sb_16_duration],
     sb_16_note: params[:sb_16_note]
   )
-  if new_sequence.save && current_user[:username] != 'guest'
-    new_sequence.to_json
+    if new_sequence.save 
+      new_sequence.to_json
+    end
   end
+    
 end
