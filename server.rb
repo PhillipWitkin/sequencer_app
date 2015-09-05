@@ -424,7 +424,8 @@ end
 #save the current sequence under a new title
 post ('/api/sequences') do
   content_type :json
-  if current_user[:username] != 'guest'
+  sequence_name_already_used = Sequence.exists?(sequence_name: params[:sequence_name], user_id: current_user[:id])
+  if current_user[:username] != 'guest' && !sequence_name_already_used
   new_sequence = Sequence.new(
     user_id: current_user[:id],
     sequence_name: params[:sequence_name],
