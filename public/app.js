@@ -193,6 +193,8 @@ var SaveSequenceView = Backbone.View.extend({
       // loadSequenceCollectionView.loadNewSavedSequence(data)
       loadNewModel(data, "saveNew")
     })
+    // if save was prevented by server, collection still synchronized
+    loadSequenceCollection.fetch()
   }
 })
 
