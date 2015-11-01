@@ -16,8 +16,12 @@ class Sequence < ActiveRecord::Base
   # attr_reader :user_id
 
   validates :sequence_name, presence: true
-  # validates :sequence_name, uniqueness: true, if: :sequence_belongs_to_current_user?
-
+  validates :sequence_name, uniqueness: { scope: :user_id }
+  validates_each :user do |record,attr,value|
+    if record.user 
+      record.errors.add(attr, "is a guest") if record.user.username == "guest"
+    end
+  end
   # def sequence_belongs_to_current_user?
   #   :user_id == current_user[:id] 
   # end

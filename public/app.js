@@ -1,3 +1,20 @@
+// code to make timers work with 'this'
+var __nativeST__ = window.setTimeout, __nativeSI__ = window.setInterval;
+ 
+window.setTimeout = function (vCallback, nDelay /*, argumentToPass1, argumentToPass2, etc. */) {
+  var oThis = this, aArgs = Array.prototype.slice.call(arguments, 2);
+  return __nativeST__(vCallback instanceof Function ? function () {
+    vCallback.apply(oThis, aArgs);
+  } : vCallback, nDelay);
+};
+ 
+window.setInterval = function (vCallback, nDelay /*, argumentToPass1, argumentToPass2, etc. */) {
+  var oThis = this, aArgs = Array.prototype.slice.call(arguments, 2);
+  return __nativeSI__(vCallback instanceof Function ? function () {
+    vCallback.apply(oThis, aArgs);
+  } : vCallback, nDelay);
+};
+
 // var currentSequence = []
 var sequenceContinue = false
 var sequenceRepeat = false
@@ -58,50 +75,50 @@ var SequenceLoadSelectionView = Backbone.View.extend({
     sequence1.fetch()
     selectedSequenceId = this.model.get('id')
     console.log("clicked to load sequence " + selectedSequenceId)
-    loadNewModel(sequence1, "loadMenu")
+    synthViews.setBlockModel(sequence1, "loadMenu")
   } 
 })
 
   //when called by clicking a sequence from the load menu, this will be called using a model associated with that view 
   //but if called after a new sequence is saved, the argument will have a value from the newly created model
-function loadNewModel(newModelData, source){
-  if (source === "saveNew"){
-    var sequence1 = new Sequence(newModelData)
-    console.log(sequence1)  
-  }else if (source === "loadMenu"){
-    var sequence1 = newModelData
-  }
-  //re-sets the new sequence1 to be the model for the label
-  sequenceLabelView.model = sequence1
-  //re-render the view for the name label so correct name appears
-  sequenceLabelView.reset()
-  sequenceLabelView.render()
-  //make sure all the sequencer blocks are clear
-  for(x=1; x < 16; x++){
-    $('[data-sequence="'+ x + '"]').removeClass('active')
-  }
-  //re-sets sequence1 as the model for all other related views
-  noteForm.model = sequence1
-  noteForm.close()
-  sequenceControlView.model = sequence1
-  s1BlockView.model = sequence1
-  s2BlockView.model = sequence1
-  s3BlockView.model = sequence1
-  s4BlockView.model = sequence1
-  s5BlockView.model = sequence1
-  s6BlockView.model = sequence1
-  s7BlockView.model = sequence1
-  s8BlockView.model = sequence1
-  s9BlockView.model = sequence1
-  s10BlockView.model = sequence1
-  s11BlockView.model = sequence1
-  s12BlockView.model = sequence1
-  s13BlockView.model = sequence1
-  s14BlockView.model = sequence1
-  s15BlockView.model = sequence1
-  s16BlockView.model = sequence1
-  saveSequenceView.model = sequence1
-}
+// function loadNewModel(newModelData, source){
+//   if (source === "saveNew"){
+//     var sequence1 = new Sequence(newModelData)
+//     console.log(sequence1)  
+//   }else if (source === "loadMenu"){
+//     var sequence1 = newModelData
+//   }
+//   //re-sets the new sequence1 to be the model for the label
+//   sequenceLabelView.model = sequence1
+//   //re-render the view for the name label so correct name appears
+//   sequenceLabelView.reset()
+//   sequenceLabelView.render()
+//   //make sure all the sequencer blocks are clear
+//   for(x=1; x < 16; x++){
+//     $('[data-sequence="'+ x + '"]').removeClass('active')
+//   }
+//   //re-sets sequence1 as the model for all other related views
+//   noteForm.model = sequence1
+//   noteForm.close()
+//   sequenceControlView.model = sequence1
+//   s1BlockView.model = sequence1
+//   s2BlockView.model = sequence1
+//   s3BlockView.model = sequence1
+//   s4BlockView.model = sequence1
+//   s5BlockView.model = sequence1
+//   s6BlockView.model = sequence1
+//   s7BlockView.model = sequence1
+//   s8BlockView.model = sequence1
+//   s9BlockView.model = sequence1
+//   s10BlockView.model = sequence1
+//   s11BlockView.model = sequence1
+//   s12BlockView.model = sequence1
+//   s13BlockView.model = sequence1
+//   s14BlockView.model = sequence1
+//   s15BlockView.model = sequence1
+//   s16BlockView.model = sequence1
+//   saveSequenceView.model = sequence1
+// }
 
 var SequenceLoadCollection = Backbone.Collection.extend({
   url: '/api/sequences',
@@ -125,14 +142,6 @@ var SequenceLoadCollectionView = Backbone.View.extend({
     this.$el.append(newSequenceLoadSelectionView.$el)
   }
 
-  //called after a new sequence is saved
-  // loadNewSavedSequence: function(newModel){
-  //   var newSequenceId = newModel.id
-  //   console.log(newSequenceId)
-  //   newModelFromCollection = loadSequenceCollection.get(newSequenceId)
-  //   console.log(newModelFromCollection)
-  //   loadNewModel(newModelFromCollection) 
-  // }
 
 })
 
@@ -191,7 +200,7 @@ var SaveSequenceView = Backbone.View.extend({
       loadSequenceCollection.fetch()
       // sequenceLabelView.render()
       // loadSequenceCollectionView.loadNewSavedSequence(data)
-      loadNewModel(data, "saveNew")
+      synthViews.setBlockModel(data, "saveNew")
     })
     // if save was prevented by server, collection still synchronized
     loadSequenceCollection.fetch()
@@ -211,74 +220,14 @@ var SequencerControlView = Backbone.View.extend({
   },
 
   startSequence: function(){
-    currentSequence = []
+    // currentSequence = []
     console.log("play sequence button clicked")
-    //cleaning up sequence model to be used be sequencer
-    var sequenceObject = _.pick(this.model.attributes, 
-      "sb_1_pitch", 
-      "sb_1_duration",
-      "sb_2_pitch", 
-      "sb_2_duration",
-      "sb_3_pitch", 
-      "sb_3_duration",
-      "sb_4_pitch", 
-      "sb_4_duration",
-      "sb_5_pitch", 
-      "sb_5_duration",
-      "sb_6_pitch", 
-      "sb_6_duration",
-      "sb_7_pitch", 
-      "sb_7_duration",
-      "sb_8_pitch", 
-      "sb_8_duration",
-      "sb_9_pitch", 
-      "sb_9_duration",
-      "sb_10_pitch", 
-      "sb_10_duration",
-      "sb_11_pitch", 
-      "sb_11_duration",
-      "sb_12_pitch", 
-      "sb_12_duration",
-      "sb_13_pitch", 
-      "sb_13_duration",
-      "sb_14_pitch", 
-      "sb_14_duration",
-      "sb_15_pitch", 
-      "sb_15_duration",
-      "sb_16_pitch", 
-      "sb_16_duration"
-      )
-    //make operations easier by first converting the object into an array
-    var sequenceArray = _.pairs(sequenceObject)
-
-    // console.log(sequenceArray)
-
-    //convert the array back to an object with a structure easy for the sequencer to read
-    for (b = 0; b < 32; b+=2){
-      console.log(b)
-      var blockPitch = sequenceArray[b]
-      var blockDuration = sequenceArray[b + 1]
-      var blockDurationCalc = blockDuration[1].split('/')   
-      block = {
-        pitch: parseInt(blockPitch[1]),
-        // duration: 300
-
-        duration: 4 * (parseInt(blockDurationCalc[0]) / parseInt(blockDurationCalc[1])) 
-      }
-      // console.log(block)
-      currentSequence.push(block)
-    }
-
-    i = 0
-    var duration
-    var pitch
-    console.log(currentSequence)
-    sequenceContinue = true
+    
+    sequenceToPlay = runSequence(this.model)
+    sequenceToPlay.play()
     //restart tempo icon animation
     clearInterval(tempoAnimateId)
     tempoSelectView.setTempo()
-    //start sequence
-    playSequence()
 
   },
 
@@ -444,6 +393,11 @@ var NoteFormView = Backbone.View.extend({
 
     var newBlockValues = _.extend(pitchObject, durationObject, noteObject)
 
+    // alternate form:
+    // newBlockValues = {}
+    // newBlockValues[blockKeyPitch] = newPitch
+    // newBlockValues[blockKeyNote] = newNote
+    // newBlockValues[blockKeyDuration] = newDuration
     console.log(newBlockValues)
     this.model.set(newBlockValues)
  
@@ -546,71 +500,134 @@ var sequenceControlView = new SequencerControlView({
   el: $('div[data-control="sequence-control"]')
 })
 
-var s1BlockView = new SequenceBlockView({
-  el: $('div[data-sequence="1"]')
-})
-
-var s2BlockView = new SequenceBlockView({
-  el: $('div[data-sequence="2"]')
-})
-
-var s3BlockView = new SequenceBlockView({
-  el: $('div[data-sequence="3"]')
-})
-
-var s4BlockView = new SequenceBlockView({
-  el: $('div[data-sequence="4"]')
-})
-
-var s5BlockView = new SequenceBlockView({
-  el: $('div[data-sequence="5"]')
-})
-
-var s6BlockView = new SequenceBlockView({
-  el: $('div[data-sequence="6"]')
-})
-
-var s7BlockView = new SequenceBlockView({
-  el: $('div[data-sequence="7"]')
-})
-
-var s8BlockView = new SequenceBlockView({
-  el: $('div[data-sequence="8"]')
-})
-
-var s9BlockView = new SequenceBlockView({
-  el: $('div[data-sequence="9"]')
-})
-
-var s10BlockView = new SequenceBlockView({
-  el: $('div[data-sequence="10"]')
-})
-
-var s11BlockView = new SequenceBlockView({
-  el: $('div[data-sequence="11"]')
-})
-
-var s12BlockView = new SequenceBlockView({
-  el: $('div[data-sequence="12"]')
-})
-
-var s13BlockView = new SequenceBlockView({
-  el: $('div[data-sequence="13"]')
-})
-
-var s14BlockView = new SequenceBlockView({
-  el: $('div[data-sequence="14"]')
-})
-
-var s15BlockView = new SequenceBlockView({
-  el: $('div[data-sequence="15"]')
-})
-
-var s16BlockView = new SequenceBlockView({
-  el: $('div[data-sequence="16"]')
-})
 
 
+// var s1BlockView = new SequenceBlockView({
+//   el: $('div[data-sequence="1"]')
+// })
+
+// var s2BlockView = new SequenceBlockView({
+//   el: $('div[data-sequence="2"]')
+// })
+
+// var s3BlockView = new SequenceBlockView({
+//   el: $('div[data-sequence="3"]')
+// })
+
+// var s4BlockView = new SequenceBlockView({
+//   el: $('div[data-sequence="4"]')
+// })
+
+// var s5BlockView = new SequenceBlockView({
+//   el: $('div[data-sequence="5"]')
+// })
+
+// var s6BlockView = new SequenceBlockView({
+//   el: $('div[data-sequence="6"]')
+// })
+
+// var s7BlockView = new SequenceBlockView({
+//   el: $('div[data-sequence="7"]')
+// })
+
+// var s8BlockView = new SequenceBlockView({
+//   el: $('div[data-sequence="8"]')
+// })
+
+// var s9BlockView = new SequenceBlockView({
+//   el: $('div[data-sequence="9"]')
+// })
+
+// var s10BlockView = new SequenceBlockView({
+//   el: $('div[data-sequence="10"]')
+// })
+
+// var s11BlockView = new SequenceBlockView({
+//   el: $('div[data-sequence="11"]')
+// })
+
+// var s12BlockView = new SequenceBlockView({
+//   el: $('div[data-sequence="12"]')
+// })
+
+// var s13BlockView = new SequenceBlockView({
+//   el: $('div[data-sequence="13"]')
+// })
+
+// var s14BlockView = new SequenceBlockView({
+//   el: $('div[data-sequence="14"]')
+// })
+
+// var s15BlockView = new SequenceBlockView({
+//   el: $('div[data-sequence="15"]')
+// })
+
+// var s16BlockView = new SequenceBlockView({
+//   el: $('div[data-sequence="16"]')
+// })
+
+
+var synthViews = (function(){
+
+  var blockViews = {}
+
+  var createBlockViews = function(){
+    for(i=1; i < 17; i++){
+      var domElement = 'div[data-sequence="' + i + '"]'
+      var blockName = 's' + i + 'BlockView'
+      blockViews[blockName] = new SequenceBlockView({el: $(domElement)})
+    }
+  }
+
+  function selelectModelData(newModelData, source){
+    if (source === "saveNew"){
+      var sequence1 = new Sequence(newModelData)
+      console.log(sequence1)
+      return sequence1  
+    }else if (source === "loadMenu"){
+      return newModelData
+    }
+  }
+  
+  //when called by clicking a sequence from the load menu, this will be called using a model associated with that view 
+  //but if called after a new sequence is saved, the argument will have a value from the newly created model
+  function setBlockModel(modelData, source){
+    var sequence1 = selelectModelData(modelData, source)
+
+    sequenceLabelView.model = sequence1
+    //re-render the view for the name label so correct name appears
+    sequenceLabelView.reset()
+    sequenceLabelView.render()
+    //make sure all the sequencer blocks are clear
+    for(x=1; x < 16; x++){
+      $('[data-sequence="'+ x + '"]').removeClass('active')
+    }
+    //re-sets sequence1 as the model for all other related views
+    noteForm.model = sequence1
+    noteForm.close()
+    sequenceControlView.model = sequence1
+    
+    for(i=1; i < 17; i++){
+      var blockName = 's' + i + 'BlockView'
+      blockViews[blockName].model = sequence1
+    }
+    saveSequenceView.model = sequence1
+  }
+
+  function setLabelModel(modelData){
+
+  }
+
+  return {
+    blockViews: (function(){
+      return blockViews
+    })(),
+    setBlockModel: setBlockModel,
+    setModelForLabel: setLabelModel,
+    create: createBlockViews
+  }
+
+})() 
 
 
 //used when user clicks a sequence block
@@ -628,61 +645,238 @@ function testNote(pitch, duration){
 
 }
 
-//main sequence function
-    function playSequence(){
+synthViews.create()
 
-      function playNote(sequence, i){
+
+// function playNote(sequence, i){
             
-            pitch = sequence[i].pitch
-            duration = sequence[i].duration * (1000 / (sequencerTempo / 60))
-            // duration = 1000 / (sequencerTempo / 60)
+//   pitch = sequence[i].pitch
+//   duration = sequence[i].duration * (1000 / (sequencerTempo / 60))
+//             // duration = 1000 / (sequencerTempo / 60)
             
-            console.log(pitch)
-            console.log(duration)
-            console.log(i)
+//   console.log(pitch)
+//   console.log(duration)
+//   console.log(i)
 
-            if (pitch !== 0){
-              oscillator.setFrequency(pitch)
-              oscillator2.setFrequency(pitch * 2)
-              oscillator3.setFrequency(pitch)
-              EG.triggerOn(1, duration)
-            }else {
-              // EG.gateOff() //if the note is rest, do nothing-EG.off creates a 'blip'
-            }
-            // animate current sequence block
-            var noteLength = duration
-            var selection = "data-sequence=" + (i+1).toString()
-            el = $('div[' + selection + ']')
-            el.animate({
-              top: "+=30"
-            }, noteLength/2, function(){
-              el.animate({
-                top: "-=30"
-              }, noteLength/2)
-            })
-            // EGosc3.triggerOn(10, duration)
+//   if (pitch !== 0){
+//     oscillator.setFrequency(pitch)
+//     oscillator2.setFrequency(pitch * 2)
+//     oscillator3.setFrequency(pitch)
+//     EG.triggerOn(1, duration)
+//   }else {
+//               // EG.gateOff() //if the note is rest, do nothing-EG.off creates a 'blip'
+//   }
+//             // animate current sequence block
+//   var noteLength = duration
+//   var selection = "data-sequence=" + (i+1).toString()
+//   el = $('div[' + selection + ']')
+//   el.animate({
+//     top: "+=30"
+//   }, noteLength/2, function(){
+//     el.animate({
+//       top: "-=30"
+//     }, noteLength/2)
+//   })
+// }
 
+// //main sequence function
+// function playSequence(){
+
+//             // EGosc3.triggerOn(10, duration)
+//   playNote(currentSequence, i)
+
+//   if (sequenceContinue === true){
+//     if (i < 15){
+//       i +=1
+//       // var noteLength = duration + 1000*EG.attackTime + 1000*EG.releaseTime
+//       var noteLength = duration
+//       setTimeout(playSequence, noteLength)
+
+//     }else if (i === 15 && sequenceRepeat === true) {
+//       i = 0
+//       // var noteLength = duration + 1000*EG.attackTime + 1000*EG.releaseTime
+//       var noteLength = duration
+//       setTimeout(playSequence, noteLength) 
+//     }else {
+//       sequenceContinue = false
+//       return "complete"
+//     }
+//   }
+// }
+
+var SequencePlayer = function(model){
+  this.model = model || sequenceTest // this will become values when refactor is complete
+  this.step = 0
+  this.repeat = false
+  // this.playerSequence = sequenceTest //temporary
+}
+
+// takes the Sequence model and converts it into playable values
+SequencePlayer.prototype.convertModel = function(){
+    currentSequence = []
+    console.log("play sequence button clicked")
+    //cleaning up sequence model to be used be sequencer
+    var sequenceObject = _.pick(this.model.attributes, 
+      "sb_1_pitch", 
+      "sb_1_duration",
+      "sb_2_pitch", 
+      "sb_2_duration",
+      "sb_3_pitch", 
+      "sb_3_duration",
+      "sb_4_pitch", 
+      "sb_4_duration",
+      "sb_5_pitch", 
+      "sb_5_duration",
+      "sb_6_pitch", 
+      "sb_6_duration",
+      "sb_7_pitch", 
+      "sb_7_duration",
+      "sb_8_pitch", 
+      "sb_8_duration",
+      "sb_9_pitch", 
+      "sb_9_duration",
+      "sb_10_pitch", 
+      "sb_10_duration",
+      "sb_11_pitch", 
+      "sb_11_duration",
+      "sb_12_pitch", 
+      "sb_12_duration",
+      "sb_13_pitch", 
+      "sb_13_duration",
+      "sb_14_pitch", 
+      "sb_14_duration",
+      "sb_15_pitch", 
+      "sb_15_duration",
+      "sb_16_pitch", 
+      "sb_16_duration"
+      )
+    //make operations easier by first flattening the object into an array
+    var sequenceArray = _.pairs(sequenceObject)
+    // console.log(sequenceArray)
+
+    //convert the array back to an object with a structure easy for the sequencer to read
+    for (b = 0; b < 32; b+=2){
+      console.log(b)
+      var blockPitch = sequenceArray[b]
+      var blockDuration = sequenceArray[b + 1]
+      var blockDurationCalc = blockDuration[1].split('/')   
+      block = {
+        pitch: parseInt(blockPitch[1]),
+        duration: 4 * (parseInt(blockDurationCalc[0]) / parseInt(blockDurationCalc[1])) 
       }
+      // console.log(block)
+      currentSequence.push(block)
+    }
+    this.playerSequence = currentSequence
+    return currentSequence  
+}
 
-      playNote(currentSequence, i)
+SequencePlayer.prototype.pitch = function(){
+    return this.playerSequence[this.step].pitch
+}
 
-      if (sequenceContinue === true){
-        if (i < 15){
-          i +=1
-          // var noteLength = duration + 1000*EG.attackTime + 1000*EG.releaseTime
-          var noteLength = duration
-          setTimeout(playSequence, noteLength)
+SequencePlayer.prototype.duration = function(){
+    return this.playerSequence[this.step].duration * (1000 / (sequencerTempo / 60))
+}
 
-        }else if (i === 15 && sequenceRepeat === true) {
-          i = 0
-          // var noteLength = duration + 1000*EG.attackTime + 1000*EG.releaseTime
-          var noteLength = duration
-          setTimeout(playSequence, noteLength) 
-        }else {
-          sequenceContinue = false
-          return "complete"
-        }
+
+
+var runSequence = function(model){
+
+  var sequencePower = new SequencePlayer(model)
+  sequencePower.convertModel()
+  sequenceContinue = true
+  
+  // function playTheSequence(){
+              // EGosc3.triggerOn(10, duration)
+
+  // plays individual note
+  var playTheNote = function(sequence){
+// SequencePlayer.prototype.playTheNote = function(){
+    var pitch = sequence.pitch()
+    var duration = sequence.duration() //* (1000 / (sequencerTempo / 60))
+              // duration = 1000 / (sequencerTempo / 60)
+    var step = sequence.step       
+    console.log(pitch)
+    console.log(duration)
+    console.log(sequence.step)
+
+    if (pitch !== 0){
+      oscillator.setFrequency(pitch)
+      oscillator2.setFrequency(pitch * 2)
+      oscillator3.setFrequency(pitch)
+      EG.triggerOn(1, duration)
+    }else {
+                // EG.gateOff() //if the note is rest, do nothing-EG.off creates a 'blip'
+    }
+              // animate current sequence block
+    var noteLength = duration
+    var selection = "data-sequence=" + (step+1).toString()
+    el = $('div[' + selection + ']')
+    el.animate({
+      top: "+=30"
+    }, noteLength/2, function(){
+      el.animate({
+        top: "-=30"
+      }, noteLength/2)
+    })
+  }
+
+  // main sequence function
+  var playTheSequence = function(){
+    playTheNote(sequencePower)
+    if (sequenceContinue === true){
+      var noteLength = sequencePower.duration()
+
+      if (sequencePower.step < 15){
+        // var noteLength = sequencePower.playerSequence[sequencePower.step].duration * (1000 / (sequencerTempo / 60))
+          sequencePower.step +=1
+          console.log(noteLength)
+          //call the function again after the current note has elapsed
+        setTimeout(playTheSequence, noteLength)
+
+      }else if (sequencePower.step === 15 && sequenceRepeat === true) {
+        // var noteLength = sequencePower.playerSequence[sequencePower.step].duration * (1000 / (sequencerTempo / 60))
+        sequencePower.step = 0
+        // var noteLength = duration + 1000*EG.attackTime + 1000*EG.releaseTime
+        setTimeout(playTheSequence, noteLength) 
+      }else {
+        sequenceContinue = false
+        return "complete"
       }
     }
+  }
+
+  return {
+    play: playTheSequence,
+    sequence: sequencePower 
+  }
+
+}
+
+//   return {
+//     pitch: function(){
+//       return playerSequence[step].pitch
+//     },
+//     duration: function(){
+//       return playerSequence[step].duration * (1000 / (sequencerTempo / 60))
+//     },
+//     step: step,
+//     sequence: playerSequence,
+//     play: playTheSequence
+//   }
+
+
+
+
+
+
+
+  
+
+
+
+
+
 
 

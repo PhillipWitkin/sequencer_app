@@ -121,6 +121,42 @@ var myKeyboard = new QwertyHancock({
 //   this.vca.connect(context.destination)
 // }
 
+var SynthSystem = function(){
+
+  this.vcosConfig = (function(){
+    // pitch controlling oscillators
+    var pitchOscillators = {    
+    oscillator: new VCO,
+    oscillator2: new VCO,
+    oscillator3: new VCO
+    }
+
+    pitchOscillators.oscillator3.oscillator.type = "triangle"
+
+    return pitchOscillators
+  })()
+
+
+  this.vcasConfig = (function(){
+    // amplifier nodes
+  })()
+
+  this.lfosConfig = (function(){
+    // low frequency oscillators
+  })()
+
+  this.egsConfig = (function(){
+    // envelopes
+  })()
+
+}
+
+// SynthSystem.prototype.connectNodes = function(){
+
+// }
+
+
+
 // note pitch
 var oscillator = new VCO
 var oscillator2 = new VCO
@@ -181,16 +217,16 @@ EG.connect(vca.amplitude)//route EG to modulate amplifier
 vca.connect(context.destination)//connect amp to end
 
 var sequenceTest = [
-  {pitch: 440, duration: 1000},
-  {pitch: 660, duration: 400},
-  {pitch: 880, duration: 2000},
-  {pitch: 440, duration: 200},
-  {pitch: 880, duration: 600}, 
-  {pitch: 440, duration: 1000},
-  {pitch: 660, duration: 400},
-  {pitch: 880, duration: 2000},
-  {pitch: 440, duration: 200},
-  {pitch: 880, duration: 600} 
+  {pitch: 440, duration: 2},
+  {pitch: 660, duration: .5},
+  {pitch: 880, duration: 2},
+  {pitch: 440, duration: 2},
+  {pitch: 880, duration: .5}, 
+  {pitch: 440, duration: 1},
+  {pitch: 660, duration: .25},
+  {pitch: 880, duration: 1},
+  {pitch: 440, duration: 1},
+  {pitch: 880, duration: 1} 
 ]
 
 var currentSequence = []
@@ -205,12 +241,11 @@ var repeat  = false
 
 
 
-
+// array of objects for data on all clicked notes 
 var playedNote = []
-var playedFrequency = []
+// var playedFrequency = []
 var maxVolume = 1
-// var keytimeDown
-// var keytimeUp
+
 
 myKeyboard.keyDown = function (note, frequency){
   console.log(note)
