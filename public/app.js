@@ -139,7 +139,7 @@ var SequenceLoadCollectionView = Backbone.View.extend({
     })
     //render it and append it to the dom
     newSequenceLoadSelectionView.render()
-    this.$el.append(newSequenceLoadSelectionView.$el)
+    this.$el.prepend(newSequenceLoadSelectionView.$el)
   }
 
 
@@ -369,35 +369,12 @@ var NoteFormView = Backbone.View.extend({
     newNote = $('input[data-id="note-val"]').val()
     newDuration = $('input[data-id="length-val"]').val()
 
-    //create a "dummby" object which has its key and value reversed; the pitch is used as the key with a value as the appropriate key in the model's attributes
-    dummbyPitchObject = {pitchToBe: blockKeyPitch}
-    //swap the key and value
-    properPitchKeys = _.invert(dummbyPitchObject)
-    //assign the new value to be pitch
-    pitchObject = _.mapObject(properPitchKeys, function(val, key){
-      return val = newPitch
-    })
-
-    //exact same technique as above but done again for note 
-    dummbyNoteObject = {noteToBe: blockKeyNote}
-    properNoteKeys = _.invert(dummbyNoteObject)
-    noteObject = _.mapObject(properNoteKeys, function(val, key){
-      return val = newNote
-    })
-    //and again for duration
-    dummbyDurationObject = {durationToBe: blockKeyDuration}
-    properDurationKeys = _.invert(dummbyDurationObject)
-    durationObject = _.mapObject(properDurationKeys, function(val, key){
-      return val = newDuration
-    })
-
-    var newBlockValues = _.extend(pitchObject, durationObject, noteObject)
 
     // alternate form:
-    // newBlockValues = {}
-    // newBlockValues[blockKeyPitch] = newPitch
-    // newBlockValues[blockKeyNote] = newNote
-    // newBlockValues[blockKeyDuration] = newDuration
+    newBlockValues = {}
+    newBlockValues[blockKeyPitch] = newPitch
+    newBlockValues[blockKeyNote] = newNote
+    newBlockValues[blockKeyDuration] = newDuration
     console.log(newBlockValues)
     this.model.set(newBlockValues)
  
@@ -566,7 +543,7 @@ var sequenceControlView = new SequencerControlView({
 //   el: $('div[data-sequence="16"]')
 // })
 
-
+// module for handling the 16 block views
 var synthViews = (function(){
 
   var blockViews = {}
@@ -588,7 +565,7 @@ var synthViews = (function(){
       return newModelData
     }
   }
-  
+
   //when called by clicking a sequence from the load menu, this will be called using a model associated with that view 
   //but if called after a new sequence is saved, the argument will have a value from the newly created model
   function setBlockModel(modelData, source){
@@ -607,10 +584,15 @@ var synthViews = (function(){
     noteForm.close()
     sequenceControlView.model = sequence1
     
-    for(i=1; i < 17; i++){
-      var blockName = 's' + i + 'BlockView'
-      blockViews[blockName].model = sequence1
+    // for(i=1; i < 17; i++){
+    //   var blockName = 's' + i + 'BlockView'
+    //   blockViews[blockName].model = sequence1
+    // }
+
+    for (var view in blockViews){
+      blockViews[view].model = sequence1
     }
+
     saveSequenceView.model = sequence1
   }
 
