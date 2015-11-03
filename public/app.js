@@ -79,46 +79,7 @@ var SequenceLoadSelectionView = Backbone.View.extend({
   } 
 })
 
-  //when called by clicking a sequence from the load menu, this will be called using a model associated with that view 
-  //but if called after a new sequence is saved, the argument will have a value from the newly created model
-// function loadNewModel(newModelData, source){
-//   if (source === "saveNew"){
-//     var sequence1 = new Sequence(newModelData)
-//     console.log(sequence1)  
-//   }else if (source === "loadMenu"){
-//     var sequence1 = newModelData
-//   }
-//   //re-sets the new sequence1 to be the model for the label
-//   sequenceLabelView.model = sequence1
-//   //re-render the view for the name label so correct name appears
-//   sequenceLabelView.reset()
-//   sequenceLabelView.render()
-//   //make sure all the sequencer blocks are clear
-//   for(x=1; x < 16; x++){
-//     $('[data-sequence="'+ x + '"]').removeClass('active')
-//   }
-//   //re-sets sequence1 as the model for all other related views
-//   noteForm.model = sequence1
-//   noteForm.close()
-//   sequenceControlView.model = sequence1
-//   s1BlockView.model = sequence1
-//   s2BlockView.model = sequence1
-//   s3BlockView.model = sequence1
-//   s4BlockView.model = sequence1
-//   s5BlockView.model = sequence1
-//   s6BlockView.model = sequence1
-//   s7BlockView.model = sequence1
-//   s8BlockView.model = sequence1
-//   s9BlockView.model = sequence1
-//   s10BlockView.model = sequence1
-//   s11BlockView.model = sequence1
-//   s12BlockView.model = sequence1
-//   s13BlockView.model = sequence1
-//   s14BlockView.model = sequence1
-//   s15BlockView.model = sequence1
-//   s16BlockView.model = sequence1
-//   saveSequenceView.model = sequence1
-// }
+
 
 var SequenceLoadCollection = Backbone.Collection.extend({
   url: '/api/sequences',
