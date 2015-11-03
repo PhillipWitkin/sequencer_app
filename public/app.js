@@ -196,11 +196,16 @@ var SaveSequenceView = Backbone.View.extend({
       data: stringifiedModel
     }).done(function(data){
       console.log(data)
-      $('#save_sequence_modal').modal('hide')
       loadSequenceCollection.fetch()
-      // sequenceLabelView.render()
-      // loadSequenceCollectionView.loadNewSavedSequence(data)
-      synthViews.setBlockModel(data, "saveNew")
+      // check to see if the save was sucessful
+      if (data instanceof Sequence){
+        synthViews.setBlockModel(data, "saveNew")
+        $('#save_sequence_modal').modal('hide')
+      } //else {
+      //   var saveError = {error: data}
+      //   var renderedError = Mustache.render($('#save-error')[0], saveError)
+      //   this.$el.html = renderedError 
+      // }
     })
     // if save was prevented by server, collection still synchronized
     loadSequenceCollection.fetch()
@@ -369,8 +374,6 @@ var NoteFormView = Backbone.View.extend({
     newNote = $('input[data-id="note-val"]').val()
     newDuration = $('input[data-id="length-val"]').val()
 
-
-    // alternate form:
     newBlockValues = {}
     newBlockValues[blockKeyPitch] = newPitch
     newBlockValues[blockKeyNote] = newNote
@@ -715,17 +718,6 @@ var runSequence = function(model){
 
 }
 
-//   return {
-//     pitch: function(){
-//       return playerSequence[step].pitch
-//     },
-//     duration: function(){
-//       return playerSequence[step].duration * (1000 / (sequencerTempo / 60))
-//     },
-//     step: step,
-//     sequence: playerSequence,
-//     play: playTheSequence
-//   }
 
 
 

@@ -19,7 +19,7 @@ class Sequence < ActiveRecord::Base
   validates :sequence_name, uniqueness: { scope: :user_id }
   validates_each :user do |record,attr,value|
     if record.user 
-      record.errors.add(attr, "is a guest") if record.user.username == "guest"
+      record.errors.add(attr, "is a guest, and guests cannot save") if record.user.username == "guest"
     end
   end
   # def sequence_belongs_to_current_user?
@@ -354,7 +354,7 @@ put ('/api/sequences/:id') do
   content_type :json
   changing_sequence = Sequence.find(params[:id])
 
-  if current_user[:username] != 'guest'
+  # if current_user[:username] != 'guest'
     changing_sequence.update(
       sb_1_pitch: params[:sb_1_pitch],
       sb_1_duration: params[:sb_1_duration],
@@ -420,7 +420,7 @@ put ('/api/sequences/:id') do
       sb_16_duration: params[:sb_16_duration],
       sb_16_note: params[:sb_16_note]
     )
-  end
+  # end
   puts params
   changing_sequence.to_json
 end
@@ -428,8 +428,8 @@ end
 #save the current sequence under a new title
 post ('/api/sequences') do
   content_type :json
-  sequence_name_already_used = Sequence.exists?(sequence_name: params[:sequence_name], user_id: current_user[:id])
-  if current_user[:username] != 'guest' && !sequence_name_already_used
+  # sequence_name_already_used = Sequence.exists?(sequence_name: params[:sequence_name], user_id: current_user[:id])
+  # if current_user[:username] != 'guest' && !sequence_name_already_used
   new_sequence = Sequence.new(
     user_id: current_user[:id],
     sequence_name: params[:sequence_name],
@@ -498,9 +498,13 @@ post ('/api/sequences') do
     sb_16_duration: params[:sb_16_duration],
     sb_16_note: params[:sb_16_note]
   )
-    if new_sequence.save 
+    if new_sequence.save
       new_sequence.to_json
+    else  
+      puts new_sequence.errors.full_messages
+      new_sequence.errors.full_messages.to_json     
     end
-  end
+
+  # end
     
 end
