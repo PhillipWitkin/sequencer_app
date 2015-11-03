@@ -21,17 +21,11 @@ var sequenceRepeat = false
 var sequencerTempo = 120
 var tempoAnimateId
 
-var Voice = Backbone.Model.extend({
-
-})
 
 var Sequence = Backbone.Model.extend({
   urlRoot: '/api/sequences'
 })
 
-var Project = Backbone.Model.extend({
-
-})
 
 
 var SequenceLabelView = Backbone.View.extend({
@@ -52,7 +46,6 @@ var SequenceLabelView = Backbone.View.extend({
   }
 })
 
-var sequenceLabelView = new SequenceLabelView({el: $('[data-attr="sequence-label"]')})
 
 
 var SequenceLoadSelectionView = Backbone.View.extend({
@@ -310,6 +303,8 @@ var NoteFormView = Backbone.View.extend({
     $('input[data-id="frequency-val"]').val(blockFrequency)
     $('input[data-id="note-val"]').val(blockNote)
     $('input[data-id="length-val"]').val(blockDuration)
+    // scroll to bottom of page
+    window.scrollTo(0,document.body.scrollHeight)
   },
 
   inputNote: function(){
@@ -403,6 +398,7 @@ var TempoSelectView = Backbone.View.extend({
   }
 })
 
+
 //controls animation of the tempo icon
 function animateBeat(){
   var beatLength = (1000 / (sequencerTempo / 60)) - 100
@@ -412,9 +408,8 @@ function animateBeat(){
   })
 }
 
-var SynthView = Backbone.View.extend({
 
-})
+var sequenceLabelView = new SequenceLabelView({el: $('[data-attr="sequence-label"]')})
 
 var saveSequenceView = new SaveSequenceView({
   el: $('[data-role="save-sequence"]')
