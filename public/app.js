@@ -556,12 +556,18 @@ function testNote(pitch, duration){
 
 }
 
+//create the views for th 16 blocks
 synthViews.create()
 
+// select the most recent sequence model from the collection
+setTimeout(function(){
+  synthViews.setBlockModel(loadSequenceCollection.at(loadSequenceCollection.length - 1), "loadMenu")  
+}, 500)
 
 
 var SequencePlayer = function(model){
-  this.model = model 
+  this.model = model  // this will become values when refactor is complete
+  this.step = 0
   this.repeat = false
   // this.playerSequence = sequenceTest //temporary
 }
@@ -709,6 +715,17 @@ var runSequence = function(model){
 
 }
 
+//   return {
+//     pitch: function(){
+//       return playerSequence[step].pitch
+//     },
+//     duration: function(){
+//       return playerSequence[step].duration * (1000 / (sequencerTempo / 60))
+//     },
+//     step: step,
+//     sequence: playerSequence,
+//     play: playTheSequence
+//   }
 
 
 
