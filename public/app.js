@@ -478,71 +478,6 @@ var sequenceControlView = new SequencerControlView({
 })
 
 
-
-// var s1BlockView = new SequenceBlockView({
-//   el: $('div[data-sequence="1"]')
-// })
-
-// var s2BlockView = new SequenceBlockView({
-//   el: $('div[data-sequence="2"]')
-// })
-
-// var s3BlockView = new SequenceBlockView({
-//   el: $('div[data-sequence="3"]')
-// })
-
-// var s4BlockView = new SequenceBlockView({
-//   el: $('div[data-sequence="4"]')
-// })
-
-// var s5BlockView = new SequenceBlockView({
-//   el: $('div[data-sequence="5"]')
-// })
-
-// var s6BlockView = new SequenceBlockView({
-//   el: $('div[data-sequence="6"]')
-// })
-
-// var s7BlockView = new SequenceBlockView({
-//   el: $('div[data-sequence="7"]')
-// })
-
-// var s8BlockView = new SequenceBlockView({
-//   el: $('div[data-sequence="8"]')
-// })
-
-// var s9BlockView = new SequenceBlockView({
-//   el: $('div[data-sequence="9"]')
-// })
-
-// var s10BlockView = new SequenceBlockView({
-//   el: $('div[data-sequence="10"]')
-// })
-
-// var s11BlockView = new SequenceBlockView({
-//   el: $('div[data-sequence="11"]')
-// })
-
-// var s12BlockView = new SequenceBlockView({
-//   el: $('div[data-sequence="12"]')
-// })
-
-// var s13BlockView = new SequenceBlockView({
-//   el: $('div[data-sequence="13"]')
-// })
-
-// var s14BlockView = new SequenceBlockView({
-//   el: $('div[data-sequence="14"]')
-// })
-
-// var s15BlockView = new SequenceBlockView({
-//   el: $('div[data-sequence="15"]')
-// })
-
-// var s16BlockView = new SequenceBlockView({
-//   el: $('div[data-sequence="16"]')
-// })
-
 // module for handling the 16 block views
 var synthViews = (function(){
 
@@ -576,7 +511,7 @@ var synthViews = (function(){
     sequenceLabelView.reset()
     sequenceLabelView.render()
     //make sure all the sequencer blocks are clear
-    for(x=1; x < 16; x++){
+    for(x=1; x < 17; x++){
       $('[data-sequence="'+ x + '"]').removeClass('active')
     }
     //re-sets sequence1 as the model for all other related views
@@ -584,11 +519,6 @@ var synthViews = (function(){
     noteForm.close()
     sequenceControlView.model = sequence1
     
-    // for(i=1; i < 17; i++){
-    //   var blockName = 's' + i + 'BlockView'
-    //   blockViews[blockName].model = sequence1
-    // }
-
     for (var view in blockViews){
       blockViews[view].model = sequence1
     }
@@ -596,16 +526,15 @@ var synthViews = (function(){
     saveSequenceView.model = sequence1
   }
 
-  function setLabelModel(modelData){
+  // function setLabelModel(modelData){
 
-  }
+  // }
 
   return {
     blockViews: (function(){
       return blockViews
     })(),
     setBlockModel: setBlockModel,
-    setModelForLabel: setLabelModel,
     create: createBlockViews
   }
 
@@ -630,65 +559,9 @@ function testNote(pitch, duration){
 synthViews.create()
 
 
-// function playNote(sequence, i){
-            
-//   pitch = sequence[i].pitch
-//   duration = sequence[i].duration * (1000 / (sequencerTempo / 60))
-//             // duration = 1000 / (sequencerTempo / 60)
-            
-//   console.log(pitch)
-//   console.log(duration)
-//   console.log(i)
-
-//   if (pitch !== 0){
-//     oscillator.setFrequency(pitch)
-//     oscillator2.setFrequency(pitch * 2)
-//     oscillator3.setFrequency(pitch)
-//     EG.triggerOn(1, duration)
-//   }else {
-//               // EG.gateOff() //if the note is rest, do nothing-EG.off creates a 'blip'
-//   }
-//             // animate current sequence block
-//   var noteLength = duration
-//   var selection = "data-sequence=" + (i+1).toString()
-//   el = $('div[' + selection + ']')
-//   el.animate({
-//     top: "+=30"
-//   }, noteLength/2, function(){
-//     el.animate({
-//       top: "-=30"
-//     }, noteLength/2)
-//   })
-// }
-
-// //main sequence function
-// function playSequence(){
-
-//             // EGosc3.triggerOn(10, duration)
-//   playNote(currentSequence, i)
-
-//   if (sequenceContinue === true){
-//     if (i < 15){
-//       i +=1
-//       // var noteLength = duration + 1000*EG.attackTime + 1000*EG.releaseTime
-//       var noteLength = duration
-//       setTimeout(playSequence, noteLength)
-
-//     }else if (i === 15 && sequenceRepeat === true) {
-//       i = 0
-//       // var noteLength = duration + 1000*EG.attackTime + 1000*EG.releaseTime
-//       var noteLength = duration
-//       setTimeout(playSequence, noteLength) 
-//     }else {
-//       sequenceContinue = false
-//       return "complete"
-//     }
-//   }
-// }
 
 var SequencePlayer = function(model){
-  this.model = model || sequenceTest // this will become values when refactor is complete
-  this.step = 0
+  this.model = model 
   this.repeat = false
   // this.playerSequence = sequenceTest //temporary
 }
@@ -836,17 +709,6 @@ var runSequence = function(model){
 
 }
 
-//   return {
-//     pitch: function(){
-//       return playerSequence[step].pitch
-//     },
-//     duration: function(){
-//       return playerSequence[step].duration * (1000 / (sequencerTempo / 60))
-//     },
-//     step: step,
-//     sequence: playerSequence,
-//     play: playTheSequence
-//   }
 
 
 
