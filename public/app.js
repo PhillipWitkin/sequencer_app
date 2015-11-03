@@ -565,7 +565,7 @@ synthViews.create()
 // select the most recent sequence model from the collection
 setTimeout(function(){
   synthViews.setBlockModel(loadSequenceCollection.at(loadSequenceCollection.length - 1), "loadMenu")  
-}, 500)
+}, 1000)
 
 
 var SequencePlayer = function(model){
