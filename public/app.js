@@ -329,7 +329,7 @@ var NoteFormView = Backbone.View.extend({
     newPitch = $('input[data-id="frequency-val"]').val()
     newNote = $('input[data-id="note-val"]').val()
     newDuration = $('input[data-id="length-val"]').val()
-
+    // assign them to an object representing part of the model behind the 16 block views
     newBlockValues = {}
     newBlockValues[blockKeyPitch] = newPitch
     newBlockValues[blockKeyNote] = newNote
@@ -609,10 +609,10 @@ var runSequence = function(model){
 
   // plays individual note
   var playTheNote = function(sequence){
-// SequencePlayer.prototype.playTheNote = function(){
+
     var pitch = sequence.pitch()
-    var duration = sequence.duration() //* (1000 / (sequencerTempo / 60))
-              // duration = 1000 / (sequencerTempo / 60)
+    var duration = sequence.duration() 
+
     var step = sequence.step       
     console.log(pitch)
     console.log(duration)
@@ -624,7 +624,7 @@ var runSequence = function(model){
       synthSystem.vcosConfig.oscillator3.setFrequency(pitch)
       synthSystem.egsConfig.EG.triggerOn(1, duration)
     }else {
-                // EG.gateOff() //if the note is rest, do nothing-EG.off creates a 'blip'
+       //if the note is rest, do nothing-EG.off creates a 'blip'
     }
               // animate current sequence block
     var noteLength = duration
@@ -639,23 +639,24 @@ var runSequence = function(model){
     })
   }
 
-  // main sequence function
+  // main sequence function - called recursively
   var playTheSequence = function(){
+    // play note at current poistion
     playTheNote(sequencePower)
+    // test conditions for next position
     if (sequenceContinue === true){
-      var noteLength = sequencePower.duration()
+      var noteLength = sequencePower.duration() //duration of current block
 
       if (sequencePower.step < 15){ // check to see if sequence has reached the end
-
+        // move to the next block
         sequencePower.step +=1
         console.log(noteLength)
           //call the function again after the current note has elapsed
         setTimeout(playTheSequence, noteLength)
 
       }else if (sequencePower.step === 15 && sequenceRepeat === true) {
-        
         sequencePower.step = 0
-        // var noteLength = duration + 1000*EG.attackTime + 1000*EG.releaseTime
+      //call the function again at first position after the current note has elapsed if the sequence is set to repeat       
         setTimeout(playTheSequence, noteLength) 
       }else {
         sequenceContinue = false
