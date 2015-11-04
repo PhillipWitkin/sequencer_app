@@ -485,9 +485,6 @@ var synthViews = (function(){
     saveSequenceView.model = sequence1
   }
 
-  // function setLabelModel(modelData){
-
-  // }
 
   return {
     blockViews: (function(){
@@ -648,15 +645,15 @@ var runSequence = function(model){
     if (sequenceContinue === true){
       var noteLength = sequencePower.duration()
 
-      if (sequencePower.step < 15){
-        // var noteLength = sequencePower.playerSequence[sequencePower.step].duration * (1000 / (sequencerTempo / 60))
-          sequencePower.step +=1
-          console.log(noteLength)
+      if (sequencePower.step < 15){ // check to see if sequence has reached the end
+
+        sequencePower.step +=1
+        console.log(noteLength)
           //call the function again after the current note has elapsed
         setTimeout(playTheSequence, noteLength)
 
       }else if (sequencePower.step === 15 && sequenceRepeat === true) {
-        // var noteLength = sequencePower.playerSequence[sequencePower.step].duration * (1000 / (sequencerTempo / 60))
+        
         sequencePower.step = 0
         // var noteLength = duration + 1000*EG.attackTime + 1000*EG.releaseTime
         setTimeout(playTheSequence, noteLength) 
