@@ -160,11 +160,11 @@ var SaveSequenceView = Backbone.View.extend({
     }).done(function(data){
       console.log(data)
       loadSequenceCollection.fetch()
-      // check to see if the save was sucessful
-      if (data instanceof Sequence){
+      // check to see if the save was sucessful - errors come back as an array
+      if (!Array.isArray(data)){
         synthViews.setBlockModel(data, "saveNew")
-        synthSystem.setVolumeMax()
         $('#save_sequence_modal').modal('hide')
+        synthSystem.setVolumeMax() // bring keyboard volume back
       } //else {
       //   var saveError = {error: data}
       //   var renderedError = Mustache.render($('#save-error')[0], saveError)
