@@ -506,11 +506,11 @@ function testNote(pitch, duration){
     console.log(pitch)
     console.log(duration)
 
-    oscillator.setFrequency(pitch)
-    oscillator2.setFrequency(pitch * 2)
-    oscillator3.setFrequency(pitch)
+    synthSystem.vcosConfig.oscillator.setFrequency(pitch)
+    synthSystem.vcosConfig.oscillator2.setFrequency(pitch * 2)
+    synthSystem.vcosConfig.oscillator3.setFrequency(pitch)
 
-    EG.triggerOn(1, duration)
+    synthSystem.egsConfig.EG.triggerOn(1, duration)
             // EGosc3.triggerOn(500, duration)
 
 }
@@ -622,10 +622,10 @@ var runSequence = function(model){
     console.log(sequence.step)
 
     if (pitch !== 0){
-      oscillator.setFrequency(pitch)
-      oscillator2.setFrequency(pitch * 2)
-      oscillator3.setFrequency(pitch)
-      EG.triggerOn(1, duration)
+      synthSystem.vcosConfig.oscillator.setFrequency(pitch)
+      synthSystem.vcosConfig.oscillator2.setFrequency(pitch * 2)
+      synthSystem.vcosConfig.oscillator3.setFrequency(pitch)
+      synthSystem.egsConfig.EG.triggerOn(1, duration)
     }else {
                 // EG.gateOff() //if the note is rest, do nothing-EG.off creates a 'blip'
     }

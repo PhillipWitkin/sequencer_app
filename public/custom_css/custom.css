@@ -36,3 +36,7 @@ html, body {
   /*background: linear-gradient(90deg, rgba(0,0,0,.7), rgba(0,0,0,.5), rgba(0.8,0.8,0.8,.5), rgba(0,0,0,.5), rgba(0,0,0,.7));*/
   background: linear-gradient(270deg, white, rgba(50, 50, 50, .3), white);
 }
+
+#sequence-name {
+  font-size: 1.75rem;
+}
