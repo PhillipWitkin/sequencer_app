@@ -105,7 +105,14 @@ var SaveSequenceView = Backbone.View.extend({
   events:{
     'click button[data-action="save-current-sequence"]': 'saveCurrentSequence',
     'click button[data-action="open-save-sequence-modal"]': 'openModal',
-    'click button[data-action="save-as-new-sequence"]': 'saveNewSequence'
+    'focus input[data-attr="new-sequence-name"]': 'silence',
+    'click button[data-action="save-as-new-sequence"]': 'saveNewSequence',
+    'click button[data-action="close-save-modal"]': 'close',
+    'blur #save_sequence_modal': 'close'
+  },
+
+  silence: function(){
+    synthSystem.setVolumeMin()
   },
 
   saveCurrentSequence: function(){
@@ -126,6 +133,7 @@ var SaveSequenceView = Backbone.View.extend({
   },
 
   openModal: function(){
+    synthSystem.setVolumeMin()
     if (this.model.attributes) {
       $('#save_sequence_modal').modal({
         keyboard: false
@@ -134,6 +142,7 @@ var SaveSequenceView = Backbone.View.extend({
   },
 
   saveNewSequence: function(){
+    // synthSystem.setVolumeMin()
     // console.log("save new sequence button clicked")
     var newName = $('input[data-attr="new-sequence-name"]').val()
     console.log(newName)
@@ -154,6 +163,7 @@ var SaveSequenceView = Backbone.View.extend({
       // check to see if the save was sucessful
       if (data instanceof Sequence){
         synthViews.setBlockModel(data, "saveNew")
+        synthSystem.setVolumeMax()
         $('#save_sequence_modal').modal('hide')
       } //else {
       //   var saveError = {error: data}
@@ -163,7 +173,12 @@ var SaveSequenceView = Backbone.View.extend({
     })
     // if save was prevented by server, collection still synchronized
     loadSequenceCollection.fetch()
+  },
+
+  close: function(){
+    synthSystem.setVolumeMax()
   }
+
 })
 
 
@@ -507,7 +522,7 @@ function testNote(pitch, duration){
     synthSystem.vcosConfig.oscillator2.setFrequency(pitch * 2)
     synthSystem.vcosConfig.oscillator3.setFrequency(pitch)
 
-    synthSystem.egsConfig.EG.triggerOn(1, duration)
+    synthSystem.egsConfig.EG.triggerOn(synthSystem.soundParams.volume, duration)
             // EGosc3.triggerOn(500, duration)
 
 }
@@ -622,7 +637,7 @@ var runSequence = function(model){
       synthSystem.vcosConfig.oscillator.setFrequency(pitch)
       synthSystem.vcosConfig.oscillator2.setFrequency(pitch * 2)
       synthSystem.vcosConfig.oscillator3.setFrequency(pitch)
-      synthSystem.egsConfig.EG.triggerOn(1, duration)
+      synthSystem.egsConfig.EG.triggerOn(synthSystem.soundParams.volume, duration)
     }else {
        //if the note is rest, do nothing-EG.off creates a 'blip'
     }
@@ -670,7 +685,7 @@ var runSequence = function(model){
     sequence: sequencePower 
   }
 
-}
+} 
 
 
 

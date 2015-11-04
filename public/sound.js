@@ -86,6 +86,7 @@ var EnvelopeGenerator = (function(context) {
   EnvelopeGenerator.prototype.gateOff = function() {
     console.log("EG gate off")
     now = context.currentTime
+    this.param.cancelScheduledValues(now);
     this.param.linearRampToValueAtTime(0, now + this.releaseTime)
     return context.currentTime
   }
@@ -160,6 +161,11 @@ var SynthSystem = function(){
     return EnvelopeGenerators
   })()
 
+  // shortcut to keep track of common params
+  this.soundParams = {
+    volume: .7
+  }
+
 }
 
 SynthSystem.prototype.connectNodes = function(){
@@ -176,6 +182,13 @@ SynthSystem.prototype.connectNodes = function(){
   this.vcasConfig.vca.connect(context.destination)  // route vca to output 
 }
 
+SynthSystem.prototype.setVolumeMin = function(){
+  this.soundParams.volume = 0
+}
+
+SynthSystem.prototype.setVolumeMax = function(){
+  this.soundParams.volume = .7
+}
 
 
 
@@ -212,7 +225,7 @@ myKeyboard.keyDown = function (note, frequency){
   synthSystem.vcosConfig.oscillator.setFrequency(frequency)
   synthSystem.vcosConfig.oscillator2.setFrequency(frequency * 2)
   synthSystem.vcosConfig.oscillator3.setFrequency(frequency)
-  synthSystem.egsConfig.EG.gateOn(maxVolume)
+  synthSystem.egsConfig.EG.gateOn(synthSystem.soundParams.volume)
   // console.log(keytimeDown)
   playedNote.push({key: note, pitch: frequency}) 
   // playedFrequency.push(frequency) 
