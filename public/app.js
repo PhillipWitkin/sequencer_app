@@ -26,6 +26,10 @@ var Sequence = Backbone.Model.extend({
   urlRoot: '/api/sequences'
 })
 
+var SequenceLoadCollection = Backbone.Collection.extend({
+  url: '/api/sequences',
+  model: Sequence
+})
 
 
 var SequenceLabelView = Backbone.View.extend({
@@ -74,10 +78,6 @@ var SequenceLoadSelectionView = Backbone.View.extend({
 
 
 
-var SequenceLoadCollection = Backbone.Collection.extend({
-  url: '/api/sequences',
-  model: Sequence
-})
 
 var SequenceLoadCollectionView = Backbone.View.extend({
   initialize: function(){
@@ -579,9 +579,12 @@ SequencePlayer.prototype.convertModel = function(){
       console.log(b)
       var blockPitch = sequenceArray[b]
       var blockDuration = sequenceArray[b + 1]
+      // durations are returned by the server as strings representing fractions of traidtional note length,
+      // eg: 1/2, 1/4, 1/8, etc. This value must be split into two, then those two divided for a decimal duration.
       var blockDurationCalc = blockDuration[1].split('/')   
       block = {
         pitch: parseInt(blockPitch[1]),
+        // the duration value is multiplied by 4 to represent 4/4 time, where 1/4 gets 1 beat, so the values scale with the tempo
         duration: 4 * (parseInt(blockDurationCalc[0]) / parseInt(blockDurationCalc[1])) 
       }
       // console.log(block)
@@ -606,9 +609,6 @@ var runSequence = function(model){
   var sequencePower = new SequencePlayer(model)
   sequencePower.convertModel()
   sequenceContinue = true
-  
-  // function playTheSequence(){
-              // EGosc3.triggerOn(10, duration)
 
   // plays individual note
   var playTheNote = function(sequence){
@@ -621,7 +621,7 @@ var runSequence = function(model){
     console.log(duration)
     console.log(sequence.step)
 
-    if (pitch !== 0){
+    if (pitch !== 0){ // make sure there is a nonzero pitch, so we don't get a "blip"
       synthSystem.vcosConfig.oscillator.setFrequency(pitch)
       synthSystem.vcosConfig.oscillator2.setFrequency(pitch * 2)
       synthSystem.vcosConfig.oscillator3.setFrequency(pitch)

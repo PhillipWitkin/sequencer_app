@@ -1,7 +1,6 @@
 
 context = new AudioContext()
 
-// var LFO = require('lfo')
 
 var VCO = (function(context) {
   function VCO(){
@@ -63,6 +62,7 @@ var EnvelopeGenerator = (function(context) {
 
   };
 
+// 'triggers' have no 'off', it is engaged, then runs its course changing the volume
   EnvelopeGenerator.prototype.triggerOn = function(maxVolume, duration) {
     now = context.currentTime;
     this.param.cancelScheduledValues(now);
@@ -73,6 +73,7 @@ var EnvelopeGenerator = (function(context) {
     this.param.setTargetAtTime(0, now + this.attackTime + duration/1000, this.releaseTime);
   };
 
+// 'gates' are switched on, changing volume to its constant 'on' level until the gate is turned off
   EnvelopeGenerator.prototype.gateOn = function(maxVolume) {
     console.log("EG gate on")
     now = context.currentTime;
@@ -81,7 +82,7 @@ var EnvelopeGenerator = (function(context) {
     this.param.linearRampToValueAtTime(maxVolume, now + this.attackTime);
     return context.currentTime
   };
-
+// the 'off' gate brings the volume back down to 0
   EnvelopeGenerator.prototype.gateOff = function() {
     console.log("EG gate off")
     now = context.currentTime
@@ -113,7 +114,7 @@ var myKeyboard = new QwertyHancock({
 
 
 
-
+// constructor function which designates and groups the relevant parts of the synthesizer
 var SynthSystem = function(){
 
   this.vcosConfig = (function(){
@@ -177,64 +178,6 @@ SynthSystem.prototype.connectNodes = function(){
 
 
 
-// note pitch
-// var oscillator = new VCO
-// var oscillator2 = new VCO
-// var oscillator3 = new VCO
-// oscillator3.oscillator.type = "triangle"
-
-// //LFO controlling primary oscillator
-// var LFO = new VCO
-// LFO.oscillator.type = "triangle"
-
-// //LFO controlling frequency of primary amp
-// var LFOamp = new VCO
-// LFOamp.oscillator.type = "sine"
-// var LFOfilter = new VCO
-
-// var LFOgain = new VCA
-// var LFOampGain = new VCA
-// var LFOampGainGate = new VCA
-// var LFOfilterGain = new VCA
-
-// var EGosc3Gain = new VCA
-// var EGosc3Level = new VCA
-
-
-
-// //note volume
-// var vca = new VCA;
-// // vca.amplitude = .5
-// var EG = new EnvelopeGenerator
-// var EGfiler = new EnvelopeGenerator
-// var EGosc3 = new EnvelopeGenerator
-// EGosc3.attackTime = 2
-
-
-// LFO.oscillator.frequency.value = 5
-// LFO.connect(LFOgain.volume)//connect LFO to gain 
-// LFOgain.connect(oscillator2.oscillator.frequency)//route LFO to modulate oscillator2 pitch 
-// LFOgain.volume.gain.value = 8 //gain for LFO
-
-// // EGosc3.connect(EGosc3Gain.volume)
-// // EGosc3Gain.volume.gain.value = 50
-// // EGosc3Gain.connect(EGosc3Level.amplitude)
-// // EGosc3Level.volume.gain.value = 100
-// // EGosc3Level.connect(oscillator3.oscillator.frequency)
-
-// oscillator.connect(vca.volume)//connect oscillator to amplifier
-// oscillator2.connect(vca.volume)//connect oscillator2 to amplifier
-// oscillator3.connect(vca.volume)
-// // vca.volume.gain.value = 0
-// // LFOamp.oscillator.frequency.value = 2 
-// // LFOamp.connect(LFOampGain.volume) //route LFOamp to LFOampGainMod
-// // LFOampGain.volume.gain.value = 5 //set LFOampGain
-// // LFOampGain.connect(LFOampGainGate.volume)
-// // EG.connect(LFOampGainGate.amplitude)//routing to try and make sure EG gates the LFOamp, and the amp stays off unless the EG is active 
-// // LFOampGainGate.volume.gain.value = 0
-// // LFOampGainGate.connect(vca.amplitude) //route LFOampGain to the primary amp
-// EG.connect(vca.amplitude)//route EG to modulate amplifier
-// vca.connect(context.destination)//connect amp to end
 
 var sequenceTest = [
   {pitch: 440, duration: 2},
@@ -249,15 +192,6 @@ var sequenceTest = [
   {pitch: 880, duration: 1} 
 ]
 
-var currentSequence = []
-
-var synthParams = {
-  osc2Int: 2
-}
-
-
-var repeat  = false
-
 
 
 
@@ -266,9 +200,11 @@ var playedNote = []
 // var playedFrequency = []
 var maxVolume = 1
 
+// instantiate the SynthSystem constructor, then connect the audio nodes
 var synthSystem = new SynthSystem()
 synthSystem.connectNodes()
 
+// function for when note on keyboard is clicked
 myKeyboard.keyDown = function (note, frequency){
   console.log(note)
   console.log(frequency)
@@ -282,13 +218,11 @@ myKeyboard.keyDown = function (note, frequency){
   // playedFrequency.push(frequency) 
 }
 
+// when keyboard note is released
 myKeyboard.keyUp = function (note, frequency){
-  // vca.disconnect(context.destination)
-  // vca.gain.value = 0
-  // oscillator.oscillator.disconnect(vca)
+
   synthSystem.egsConfig.EG.gateOff()
-  // console.log(keytimeUp)
-  
+  // console.log(keytimeUp)  
 }
 
 
