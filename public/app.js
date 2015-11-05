@@ -165,11 +165,12 @@ var SaveSequenceView = Backbone.View.extend({
         synthViews.setBlockModel(data, "saveNew")
         $('#save_sequence_modal').modal('hide')
         synthSystem.setVolumeMax() // bring keyboard volume back
-      } //else {
-      //   var saveError = {error: data}
-      //   var renderedError = Mustache.render($('#save-error')[0], saveError)
-      //   this.$el.html = renderedError 
-      // }
+      } else {
+        $('#save-error').empty()
+        var errors = data.map(function(m){ return {error: m} })
+        var renderedError = Mustache.render("{{#allErrors}}<p>{{error}}</p>{{/allErrors}}</p>", {allErrors: errors})
+        $('#save-error').append(renderedError) 
+      }
     })
     // if save was prevented by server, collection still synchronized
     loadSequenceCollection.fetch()
