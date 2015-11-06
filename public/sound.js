@@ -61,37 +61,37 @@ var VCA = (function(context) {
 
 var EnvelopeGenerator = (function(context) {
   function EnvelopeGenerator(){
-    this.attackTime = .4;
+    this.attackTime = .3;
     this.releaseTime = .3;
 
   };
 
 // 'triggers' have no 'off', it is engaged, then runs its course changing the volume
-  EnvelopeGenerator.prototype.triggerOn = function(maxVolume, duration) {
+  EnvelopeGenerator.prototype.triggerOn = function(max, duration, min) {
+    console.log("EG trigger on")
     now = context.currentTime;
     this.param.cancelScheduledValues(now);
-    console.log("EG trigger on")
-    this.param.setValueAtTime(0, now);
-    this.param.linearRampToValueAtTime(maxVolume, now + this.attackTime);
-    this.param.setValueAtTime(maxVolume, now + this.attackTime + duration/1000)
-    this.param.setTargetAtTime(0, now + this.attackTime + duration/1000, this.releaseTime);
+    this.param.setTargetAtTime(min || 0, now, .01);
+    this.param.linearRampToValueAtTime(max, now + this.attackTime);
+    // this.param.setValueAtTime(max, now + this.attackTime + duration/1000)
+    this.param.setTargetAtTime(min || 0, now + this.attackTime + duration/1000, this.releaseTime);
   };
 
-// 'gates' are switched on, changing volume to its constant 'on' level until the gate is turned off
-  EnvelopeGenerator.prototype.gateOn = function(maxVolume) {
+// 'gates' are switched on, changing (volume or other parameter) starting at min, to its constant max 'on' level until the gate is turned off
+  EnvelopeGenerator.prototype.gateOn = function(max, min) {
     console.log("EG gate on")
     now = context.currentTime;
     this.param.cancelScheduledValues(now);
-    this.param.setValueAtTime(0, now);
-    this.param.linearRampToValueAtTime(maxVolume, now + this.attackTime);
+    this.param.setValueAtTime(min || 0, now);
+    this.param.linearRampToValueAtTime(max, now + this.attackTime);
     return context.currentTime
   };
-// the 'off' gate brings the volume back down to 0
-  EnvelopeGenerator.prototype.gateOff = function() {
+// the 'off' gate brings the (volume) back down to 0 or min value
+  EnvelopeGenerator.prototype.gateOff = function(min) {
     console.log("EG gate off")
     now = context.currentTime
     this.param.cancelScheduledValues(now);
-    this.param.linearRampToValueAtTime(0, now + this.releaseTime)
+    this.param.linearRampToValueAtTime(min || 0, now + this.releaseTime)
     return context.currentTime
   }
 
@@ -193,11 +193,15 @@ var SynthSystem = function(){
   })()
 
   this.egsConfig = (function(){
-    // envelope generator for volume contour
-    var EnvelopeGenerators = {
-      EG: new EnvelopeGenerator
+    // envelope generators 
+    var envelopeGenerators = {
+      EG: new EnvelopeGenerator, //for volume contour
+      filterEG: new EnvelopeGenerator // for filter cutoff
     }
-    return EnvelopeGenerators
+
+    envelopeGenerators.filterEG.attackTime = .2
+
+    return envelopeGenerators
   })()
 
   this.filtersConfig = (function(){
@@ -218,7 +222,11 @@ var SynthSystem = function(){
     },
     filter: {
       cutoff: 1000,
-      resonance: 1
+      resonance: 1,
+      attackTime: .1,
+      releaseTime: .3,
+      startLevel: 1000, // cutoff start controlled by filterEG
+      stopLevel: 2000 // cutoff stop controlled by filterEG
     }
   }
 
@@ -236,6 +244,7 @@ SynthSystem.prototype.connectNodes = function(){
   this.egsConfig.EG.connect(this.vcasConfig.vca.amplitude)   // route EG to vca amplitude
 
   // this.vcasConfig.vca.connect(context.destination)  // route vca to output
+  this.egsConfig.filterEG.connect(this.filtersConfig.LPF.filter.frequency) // eg to modulate filter
   this.vcasConfig.vca.connect(this.filtersConfig.LPF.filter)  // route vca to filter
   this.filtersConfig.LPF.connect(context.destination) // route filter to output
 }
@@ -288,6 +297,7 @@ myKeyboard.keyDown = function (note, frequency){
   synthSystem.vcosConfig.oscillator2.setFrequency(frequency * 2)
   synthSystem.vcosConfig.oscillator3.setFrequencyWithPortamento(frequency, synthSystem.soundParams.portamento)
   synthSystem.egsConfig.EG.gateOn(synthSystem.soundParams.volume)
+  synthSystem.egsConfig.filterEG.gateOn(synthSystem.soundParams.filter.stopLevel, synthSystem.soundParams.filter.startLevel)
   // console.log(keytimeDown)
   playedNote.push({key: note, pitch: frequency}) 
   // playedFrequency.push(frequency) 

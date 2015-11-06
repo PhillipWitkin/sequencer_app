@@ -526,11 +526,12 @@ function testNote(pitch, duration){
 
     synthSystem.vcosConfig.oscillator.setFrequency(pitch)
     synthSystem.vcosConfig.oscillator2.setFrequency(pitch * 2)
-    synthSystem.vcosConfig.oscillator3.setFrequency(pitch)
+    // synthSystem.vcosConfig.oscillator3.setFrequency(pitch)
+    synthSystem.vcosConfig.oscillator3.setFrequencyWithPortamento(pitch, synthSystem.soundParams.portamento)
+ 
+    synthSystem.egsConfig.filterEG.triggerOn(synthSystem.soundParams.filter.stopLevel, duration, synthSystem.soundParams.filter.startLevel)
 
     synthSystem.egsConfig.EG.triggerOn(synthSystem.soundParams.volume, duration)
-            // EGosc3.triggerOn(500, duration)
-
 }
 
 //create the views for th 16 blocks
@@ -628,6 +629,7 @@ var runSequence = function(model){
   var sequencePower = new SequencePlayer(model)
   sequencePower.convertModel()
   sequenceContinue = true
+  synthSystem.setVolumeMax()
 
   // plays individual note
   var playTheNote = function(sequence){
@@ -643,8 +645,11 @@ var runSequence = function(model){
     if (pitch !== 0){ // make sure there is a nonzero pitch, so we don't get a "blip"
       synthSystem.vcosConfig.oscillator.setFrequency(pitch)
       synthSystem.vcosConfig.oscillator2.setFrequency(pitch * 2)
-      synthSystem.vcosConfig.oscillator3.setFrequency(pitch)
+      // synthSystem.vcosConfig.oscillator3.setFrequency(pitch)
+      synthSystem.vcosConfig.oscillator3.setFrequencyWithPortamento(pitch, synthSystem.soundParams.portamento)
       synthSystem.egsConfig.EG.triggerOn(synthSystem.soundParams.volume, duration)
+      synthSystem.egsConfig.filterEG.triggerOn(synthSystem.soundParams.filter.stopLevel, duration, synthSystem.soundParams.filter.startLevel)
+
     }else {
        //if the note is rest, do nothing-EG.off creates a 'blip'
     }
