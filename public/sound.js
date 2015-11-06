@@ -22,6 +22,10 @@ var VCO = (function(context) {
     this.oscillator.frequency.setValueAtTime(frequency, context.currentTime);
   };
 
+  VCO.prototype.setFrequencyWithPortamento = function(frequency, time) {
+    this.oscillator.frequency.setTargetAtTime(frequency, context.currentTime, time)
+  }
+
   VCO.prototype.connect = function(node) {
     // if (node.hasOwnProperty('input')) {
     //   this.output.connect(node.input);
@@ -100,6 +104,39 @@ var EnvelopeGenerator = (function(context) {
 })(context)
 
 
+// Biquad filter
+var BQF = (function(context) {
+
+  function BQF(){
+    this.filter = context.createBiquadFilter()
+    this.filter.type = 'lowpass' // default 
+    this.lowPassFilter = this.filter
+
+    this.input = this.lowPassFilter
+    this.output = this.lowPassFilter
+    // set default values
+    this.lowPassFilter.frequency.value = 2000
+    this.lowPassFilter.Q.value = 10
+  }
+
+  BQF.prototype.connect = function(node) {
+    this.output.connect(node)
+  }
+
+  BQF.prototype.setCutoffFrequency = function(frequency){
+    // frequency should fall between 40 and 20,000
+    this.filter.frequency.value = frequency
+  }
+
+  BQF.prototype.setResonanceLevel = function(level){
+    // falls between .0001 and 1000
+    this.filter.Q = level + .001
+  }
+
+  return BQF
+})(context)
+
+
 
 
 var myKeyboard = new QwertyHancock({
@@ -144,7 +181,9 @@ var SynthSystem = function(){
     // low frequency oscillators, for modulation
     var lfoComponents = {
       LFO: new VCO,
-      LFOgain: new VCA
+      LFOgain: new VCA,
+      LFOtremolo: new VCO,
+      LFOtremeloGain: new VCA
     }
 
     lfoComponents.LFO.oscillator.frequency.value = 5
@@ -161,9 +200,26 @@ var SynthSystem = function(){
     return EnvelopeGenerators
   })()
 
-  // shortcut to keep track of common params
+  this.filtersConfig = (function(){
+    // low pass filter 
+    var lowPassFilter = {
+      LPF: new BQF
+    }
+    return lowPassFilter
+  })()
+
+  // shortcut to keep track of common params; fed into components as arguments
   this.soundParams = {
-    volume: .7
+    volume: .7,
+    portamento: .05,
+    vibrato: {
+      frequency: 5,
+      gain: 8
+    },
+    filter: {
+      cutoff: 1000,
+      resonance: 1
+    }
   }
 
 }
@@ -179,15 +235,21 @@ SynthSystem.prototype.connectNodes = function(){
 
   this.egsConfig.EG.connect(this.vcasConfig.vca.amplitude)   // route EG to vca amplitude
 
-  this.vcasConfig.vca.connect(context.destination)  // route vca to output 
+  // this.vcasConfig.vca.connect(context.destination)  // route vca to output
+  this.vcasConfig.vca.connect(this.filtersConfig.LPF.filter)  // route vca to filter
+  this.filtersConfig.LPF.connect(context.destination) // route filter to output
 }
 
 SynthSystem.prototype.setVolumeMin = function(){
   this.soundParams.volume = 0
 }
 
-SynthSystem.prototype.setVolumeMax = function(){
-  this.soundParams.volume = .7
+SynthSystem.prototype.setVolumeMax = function(level){
+  this.soundParams.volume = level || .7
+}
+
+SynthSystem.prototype.setPortamento = function(milliseconds){
+  this.soundParams.portamento = milliseconds * 1000
 }
 
 
@@ -224,7 +286,7 @@ myKeyboard.keyDown = function (note, frequency){
     
   synthSystem.vcosConfig.oscillator.setFrequency(frequency)
   synthSystem.vcosConfig.oscillator2.setFrequency(frequency * 2)
-  synthSystem.vcosConfig.oscillator3.setFrequency(frequency)
+  synthSystem.vcosConfig.oscillator3.setFrequencyWithPortamento(frequency, synthSystem.soundParams.portamento)
   synthSystem.egsConfig.EG.gateOn(synthSystem.soundParams.volume)
   // console.log(keytimeDown)
   playedNote.push({key: note, pitch: frequency}) 

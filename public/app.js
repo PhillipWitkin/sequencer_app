@@ -162,9 +162,11 @@ var SaveSequenceView = Backbone.View.extend({
       loadSequenceCollection.fetch()
       // check to see if the save was sucessful - errors come back as an array
       if (!Array.isArray(data)){
+        // set all 16 control blocks to the new sequence name
         synthViews.setBlockModel(data, "saveNew")
         $('#save_sequence_modal').modal('hide')
         synthSystem.setVolumeMax() // bring keyboard volume back
+      
       } else {
         $('#save-error').empty()
         var errors = data.map(function(m){ return {error: m} })
@@ -425,16 +427,6 @@ function animateBeat(){
 }
 
 
-var sequenceLabelView = new SequenceLabelView({el: $('[data-attr="sequence-label"]')})
-
-var saveSequenceView = new SaveSequenceView({
-  el: $('[data-role="save-sequence"]')
-})
-
-var tempoSelectView = new TempoSelectView({
-  el: $('[data-control="tempo-control"]')
-})
-
 var loadSequenceCollection = new SequenceLoadCollection()
 
 var loadSequenceCollectionView = new SequenceLoadCollectionView({
@@ -442,23 +434,36 @@ var loadSequenceCollectionView = new SequenceLoadCollectionView({
   el: $('ul[data-role="sequence-selector"]')
 })
 
-var noteForm = new NoteFormView({
-  // model: sequence1, 
-  el: $('[data-role="note-form"]')
+var saveSequenceView = new SaveSequenceView({
+  el: $('[data-role="save-sequence"]')
 })
-    
+
+
+var tempoSelectView = new TempoSelectView({
+  el: $('[data-control="tempo-control"]')
+})
+
 var sequenceControlView = new SequencerControlView({
   // model: sequence1,
   el: $('div[data-control="sequence-control"]')
 })
 
 
+var noteForm = new NoteFormView({
+  // model: sequence1, 
+  el: $('[data-role="note-form"]')
+})
+    
+
+
 // module for handling the 16 block views
 var synthViews = (function(){
 
+  var sequenceLabelView = new SequenceLabelView({el: $('[data-attr="sequence-label"]')})
+
   var blockViews = {}
 
-  var createBlockViews = function(){
+  function createBlockViews(){
     for(i=1; i < 17; i++){
       var domElement = 'div[data-sequence="' + i + '"]'
       var blockName = 's' + i + 'BlockView'
@@ -537,8 +542,9 @@ setTimeout(function(){
 }, 1000)
 
 
+// constructor for preparing Sequence model for play
 var SequencePlayer = function(model){
-  this.model = model  // this will become values when refactor is complete
+  this.model = model  
   this.step = 0
   this.repeat = false
   // this.playerSequence = sequenceTest //temporary
