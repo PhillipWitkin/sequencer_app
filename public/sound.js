@@ -1,3 +1,4 @@
+console.log("sound.js loaded")
 
 context = new AudioContext()
 
@@ -215,8 +216,16 @@ var SynthSystem = function(){
   // shortcut to keep track of common params; fed into components as arguments
   this.soundParams = {
     volume: .7,
+    oscillator2: {
+      interval: 2,
+      shape: 'sawtooth'
+    },
+    oscillator3: {
+      interval: 0,
+      shape: 'triangle'
+    },
     portamento: .05,
-    vibrato: {
+    LFO: {
       frequency: 5,
       gain: 8
     },
@@ -227,6 +236,10 @@ var SynthSystem = function(){
       releaseTime: .3,
       startLevel: 1000, // cutoff start controlled by filterEG
       stopLevel: 2000 // cutoff stop controlled by filterEG
+    },
+    EG: {
+      attackTime: .3,
+      releaseTime: .3
     }
   }
 
