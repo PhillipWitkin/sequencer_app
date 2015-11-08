@@ -10,6 +10,87 @@ var SequenceLoadCollection = Backbone.Collection.extend({
 })
 
 
+// takes Sequence model and prepares it to be played
+var SequencePlay = Sequence.extend({
+  // constructor: function(){
+
+  // },
+  initialize: function(attributes){
+
+      currentSequence = []
+      console.log("play sequence button clicked")
+      //cleaning up sequence model to be used be sequencer
+      var sequenceObject = _.pick(attributes, 
+        "sb_1_pitch", 
+        "sb_1_duration",
+        "sb_2_pitch", 
+        "sb_2_duration",
+        "sb_3_pitch", 
+        "sb_3_duration",
+        "sb_4_pitch", 
+        "sb_4_duration",
+        "sb_5_pitch", 
+        "sb_5_duration",
+        "sb_6_pitch", 
+        "sb_6_duration",
+        "sb_7_pitch", 
+        "sb_7_duration",
+        "sb_8_pitch", 
+        "sb_8_duration",
+        "sb_9_pitch", 
+        "sb_9_duration",
+        "sb_10_pitch", 
+        "sb_10_duration",
+        "sb_11_pitch", 
+        "sb_11_duration",
+        "sb_12_pitch", 
+        "sb_12_duration",
+        "sb_13_pitch", 
+        "sb_13_duration",
+        "sb_14_pitch", 
+        "sb_14_duration",
+        "sb_15_pitch", 
+        "sb_15_duration",
+        "sb_16_pitch", 
+        "sb_16_duration"
+        )
+      //make operations easier by first flattening the object into an array
+      var sequenceArray = _.pairs(sequenceObject)
+      // console.log(sequenceArray)
+
+      //convert the array back to an object with a structure easy for the sequencer to read
+      for (b = 0; b < 32; b+=2){
+        console.log(b)
+        var blockPitch = sequenceArray[b]
+        var blockDuration = sequenceArray[b + 1]
+        // durations are returned by the server as strings representing fractions of traidtional note length,
+        // eg: 1/2, 1/4, 1/8, etc. This value must be split into two, then those two divided for a decimal duration.
+        var blockDurationCalc = blockDuration[1].split('/')   
+        block = {
+          pitch: parseInt(blockPitch[1]),
+          // the duration value is multiplied by 4 to represent 4/4 time, where 1/4 gets 1 beat, so the values scale with the tempo
+          duration: 4 * (parseInt(blockDurationCalc[0]) / parseInt(blockDurationCalc[1])) 
+        }
+        // console.log(block)
+        currentSequence.push(block)
+      }
+
+      this.blocks = currentSequence
+      return currentSequence  
+
+  }
+
+  // pitch: function(){
+  //   return this.blocks[this.step].pitch
+  // },
+
+  // duration: function(){
+  //   return this.blocks[this.step].duration
+  // }
+
+})
+
+
 var SequenceLabelView = Backbone.View.extend({
   
   template: $('[data-template="selected-label"]').text(),
@@ -234,17 +315,10 @@ var SequenceBlockView = Backbone.View.extend({
       blockNote = this.model.get(noteBlockKey) 
       console.log(blockPitch)
       //send these values to play a single note
-      testNote(blockPitch, blockDuration)
+      triggerNote(blockPitch, blockDuration)
       //animate the sequence block
-      el = this.$el
-      this.$el.animate({
-        top: "+=30"
-      }, blockDuration/2, function(){
-        el.animate({
-          top: "-=30"
-        }, blockDuration/2)
-      })
-      
+      animateBlock(blockNumber, blockDuration)
+      // display form with data from that block
       noteForm.render(blockNumber)
     }
   }
