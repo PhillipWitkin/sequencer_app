@@ -92,7 +92,7 @@ var EnvelopeGenerator = (function(context) {
     console.log("EG gate off")
     now = context.currentTime
     this.param.cancelScheduledValues(now);
-    this.param.linearRampToValueAtTime(min || 0, now + this.releaseTime)
+    this.param.linearRampToValueAtTime(min || 0, now + .01 + this.releaseTime)
     return context.currentTime
   }
 
@@ -118,6 +118,8 @@ var BQF = (function(context) {
     // set default values
     this.lowPassFilter.frequency.value = 2000
     this.lowPassFilter.Q.value = 10
+
+    this.gainForEG = 0
   }
 
   BQF.prototype.connect = function(node) {
@@ -126,12 +128,21 @@ var BQF = (function(context) {
 
   BQF.prototype.setCutoffFrequency = function(frequency){
     // frequency should fall between 40 and 20,000
-    this.filter.frequency.value = frequency
+    this.lowPassFilter.frequency.value = frequency
+  }
+
+  BQF.prototype.sweepCutoffFrequency = function(frequency, time){
+    // frequency should fall between 40 and 20,000
+    this.lowPassFilter.frequency.setTargetAtTime(frequency, context.currentTime, time || .2)
   }
 
   BQF.prototype.setResonanceLevel = function(level){
     // falls between .0001 and 1000
     this.filter.Q = level + .001
+  }
+
+  BQF.prototype.EGvalues = function(gain, level){
+    return this.filter.frequency.value * ( 1 + ((level - 1) * gain ))
   }
 
   return BQF
@@ -201,6 +212,7 @@ var SynthSystem = function(){
     }
 
     envelopeGenerators.filterEG.attackTime = .2
+    envelopeGenerators.filterEG.releaseTime = .05
 
     return envelopeGenerators
   })()
@@ -214,34 +226,36 @@ var SynthSystem = function(){
   })()
 
   // shortcut to keep track of common params; fed into components as arguments
-  this.soundParams = {
-    volume: .7,
-    oscillator2: {
-      interval: 2,
-      shape: 'sawtooth'
-    },
-    oscillator3: {
-      interval: 0,
-      shape: 'triangle'
-    },
-    portamento: .05,
-    LFO: {
-      frequency: 5,
-      gain: 8
-    },
-    filter: {
-      cutoff: 1000,
-      resonance: 1,
-      attackTime: .1,
-      releaseTime: .3,
-      startLevel: 1000, // cutoff start controlled by filterEG
-      stopLevel: 2000 // cutoff stop controlled by filterEG
-    },
-    EG: {
-      attackTime: .3,
-      releaseTime: .3
-    }
-  }
+  this.soundParams = new Voice().attributes
+  // {
+  //   volume: .7,
+  //   oscillator2: {
+  //     interval: 2,
+  //     shape: 'sawtooth'
+  //   },
+  //   oscillator3: {
+  //     interval: 0,
+  //     shape: 'triangle'
+  //   },
+  //   portamento: .05,
+  //   LFO: {
+  //     frequency: 5,
+  //     gain: 8
+  //   },
+  //   filter: {
+  //     cutoff: 2000,
+  //     resonance: 1,
+  //     attackTime: .1,
+  //     releaseTime: .3,
+  //     startLevel: 0, // cutoff start controlled by filterEG
+  //     stopLevel: 1, // cutoff stop controlled by filterEG
+  //     gain: 1
+  //   },
+  //   EG: {
+  //     attackTime: .3,
+  //     releaseTime: .3
+  //   }
+  // }
 
 }
 
@@ -274,6 +288,15 @@ SynthSystem.prototype.setPortamento = function(milliseconds){
   this.soundParams.portamento = milliseconds * 1000
 }
 
+// computes adjusted values for filter envlope using gain
+SynthSystem.prototype.EGvaluesFilter = function(){
+  return [this.soundParams.filterCutoff * ( 1 + ((this.soundParams.filterEGstopLevel - 1) * this.soundParams.filterEGgain)),
+  this.soundParams.filterCutoff * ( 1 + ((this.soundParams.filterEGstartLevel - 1) * this.soundParams.filterEGgain ))]
+  // return [
+  //   this.filtersConfig.LPF.EGvalues(this.soundParams.filterEGgain, this.soundParams.filterEGstopLevel),
+  //   this.filtersConfig.LPF.EGvalues(this.soundParams.filterEGgain, this.soundParams.filterEGstartLevel)
+  //   ]
+}
 
 
 var sequenceTest = [
@@ -310,7 +333,9 @@ myKeyboard.keyDown = function (note, frequency){
   synthSystem.vcosConfig.oscillator2.setFrequency(frequency * 2)
   synthSystem.vcosConfig.oscillator3.setFrequencyWithPortamento(frequency, synthSystem.soundParams.portamento)
   synthSystem.egsConfig.EG.gateOn(synthSystem.soundParams.volume)
-  synthSystem.egsConfig.filterEG.gateOn(synthSystem.soundParams.filter.stopLevel, synthSystem.soundParams.filter.startLevel)
+  var filterEGvalues = synthSystem.EGvaluesFilter()
+  synthSystem.egsConfig.filterEG.gateOn(filterEGvalues[0], filterEGvalues[1])
+
   // console.log(keytimeDown)
   playedNote.push({key: note, pitch: frequency}) 
   // playedFrequency.push(frequency) 

@@ -90,6 +90,27 @@ var SequencePlay = Sequence.extend({
 
 })
 
+var Voice = Backbone.Model.extend({
+  defaults: {
+    volume: .7,
+    oscillator2Interval: 2,
+    oscillator2Shape: 'sawtooth',
+    oscillator3Interval: 0,
+    oscillator3shape: 'triangle',
+    portamento: .05,
+    LFOfrequency: 5,
+    LFOgain: 8,
+    filterCutoff: 2000,
+    filterResonance: 1,
+    filterEGattackTime: .1,
+    filterEGreleaseTime: .3,
+    filterEGstartLevel: 0, // cutoff start controlled by filterEG
+    filterEGstopLevel: 1, // cutoff stop controlled by filter ,
+    filterEGgain: 1,
+    EGattackTime: .3,
+    EGreleaseTime: .3
+  }
+})
 
 var SequenceLabelView = Backbone.View.extend({
   
@@ -467,3 +488,63 @@ var TempoSelectView = Backbone.View.extend({
     tempoAnimateId = setInterval(animateBeat, beatLength)
   }
 })
+
+var FilterView = Backbone.View.extend({
+  
+  initialize: function(){
+    $('#filter-cutoff-slider').slider({
+      value: 2000,
+      min: 200,
+      max: 5000
+    })
+    // $('#cutoff').val(synthSystem.filtersConfig.LPF.filter.frequency.value + " Hz")
+    $('#filter-resonance-slider').slider({
+      value: 1,
+      min: .01,
+      max: 20
+    })
+    this.adjustCutoff()
+    this.listenTo(this.model, 'change', 'adjustCutoff')
+  },
+
+  events: {
+    'slide #filter-cutoff-slider':'sweep',
+    'slide #filter-resonance-slider': 'resonance',
+    'click #filter-cutoff-slider':'adjustCutoff'
+  },
+
+  adjustCutoff: function(){
+    var value = $('#filter-cutoff-slider').slider("option", "value")
+    // var scaledValue = 1000*Math.log(value)
+    console.log(value)
+    $('#cutoff').val(this.model.get('filterCutoff') + " Hz")
+    $('#resonance').val(this.model.get('filterResonance'))
+  },
+
+  sweep: function(){
+    var self = this
+    console.log("ending...")
+    $('#filter-cutoff-slider').slider({
+      slide: function(event, ui){
+        console.log(ui.value)
+        self.model.set('filterCutoff', ui.value)
+        synthSystem.filtersConfig.LPF.sweepCutoffFrequency(ui.value, .2)
+        self.adjustCutoff()
+      }
+    })
+  },
+
+  resonance: function(){
+    var self = this
+    $('#filter-resonance-slider').slider({
+      slide: function(event, ui){
+        console.log(ui.value)
+        self.model.set('filterResonance', ui.value)
+        synthSystem.filtersConfig.LPF.filter.Q.value = ui.value
+        self.adjustCutoff()
+      }
+    })
+  }
+})
+
+

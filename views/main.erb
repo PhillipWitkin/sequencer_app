@@ -13,6 +13,9 @@
 <!-- Latest compiled and minified JavaScript -->
 <script src="./scripts/bootstrap/js/bootstrap.min.js"></script>
 
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+  <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+
 <link href='https://fonts.googleapis.com/css?family=Lobster' rel='stylesheet' type='text/css'>
 <link rel="stylesheet" href="./custom_css/custom.css">
 
@@ -57,7 +60,7 @@
 
 <div class="container-fluid" id="bgmain">
 
-<!--   <div class="row">
+  <div class="row">
     <div class="col-sm-1"></div>
     <div class="col-sm-3">
       <div class="well">
@@ -79,11 +82,23 @@
       </div>
     </div>
 
-    <div class="col-sm-3">
+    <div class="col-sm-4">
       <div class="well">
         <div class="row">
-          <div class="well">
-            <h4>Filter Cutoff</h4>
+          <div class="well" id="filter">
+            <div id="filter-cutoff">
+              <!-- <div class="col-sm-6"> -->
+                <label for="cutoff">Filter Cutoff Frequency:</label>
+                <input type="text" id="cutoff" readonly>
+                <div id="filter-cutoff-slider"></div>
+              <!-- </div> -->
+            </div>
+            <div id="filter-resonance">
+              <span><label for="resonance">Resonance:</label>
+              <input type="text" id="resonance" readonly>
+              <div id="filter-resonance-slider"></div>
+              </span>
+            </div>
           </div>
         </div>
         <div class="row">
@@ -115,7 +130,7 @@
       </div>
     </div>
 
-  </div> -->
+  </div>
 
   <div class="row" id="container">
     <div class="col-md-11">
@@ -437,8 +452,8 @@
 <script type="text/javascript" src="./scripts/backbone.js"></script>
 <script type="text/javascript" src="./scripts/mustache.js"></script>
 <script src="./scripts/qwerty-hancock.js"></script>
-<script src="./sound.js"></script>
 <script src="./BBmodelsAndViews.js"></script>
+<script src="./sound.js"></script>
 <script src="./app.js"></script>
 
 </html>   

@@ -136,7 +136,7 @@ function triggerNote(pitch, duration){
     // synthSystem.vcosConfig.oscillator3.setFrequency(pitch)
     synthSystem.vcosConfig.oscillator3.setFrequencyWithPortamento(pitch, synthSystem.soundParams.portamento)
  
-    synthSystem.egsConfig.filterEG.triggerOn(synthSystem.soundParams.filter.stopLevel, duration, synthSystem.soundParams.filter.startLevel)
+    // synthSystem.egsConfig.filterEG.triggerOn(synthSystem.soundParams.filter.stopLevel, duration, synthSystem.soundParams.filter.startLevel)
 
     synthSystem.egsConfig.EG.triggerOn(synthSystem.soundParams.volume, duration)
 }
@@ -207,7 +207,6 @@ var runSequence = function(model){
        //if the note is rest, do nothing-EG.off creates a 'blip'
     }
               // animate current sequence block
-    var noteLength = duration
     animateBlock(step+1, duration)
   }
 
@@ -245,6 +244,10 @@ var runSequence = function(model){
 } 
 
 
+var filterView = new FilterView({
+  el: $('#filter'),
+  model: new Voice()
+})
 
 
 
