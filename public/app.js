@@ -137,6 +137,8 @@ function triggerNote(pitch, duration){
     synthSystem.vcosConfig.oscillator3.setFrequencyWithPortamento(pitch, synthSystem.soundParams.portamento)
  
     // synthSystem.egsConfig.filterEG.triggerOn(synthSystem.soundParams.filter.stopLevel, duration, synthSystem.soundParams.filter.startLevel)
+    var filterEGvalues = synthSystem.EGvaluesFilter()
+    synthSystem.egsConfig.filterEG.triggerOn(filterEGvalues[0], duration, filterEGvalues[1])
 
     synthSystem.egsConfig.EG.triggerOn(synthSystem.soundParams.volume, duration)
 }
@@ -243,12 +245,33 @@ var runSequence = function(model){
 
 } 
 
+var synthVoice = new Voice()
+
 
 var filterView = new FilterView({
   el: $('#filter'),
-  model: new Voice()
+  model: synthVoice
 })
 
+var filterEGview = new EGfilterView({
+  el: $('#filter-envelope'),
+  model: synthVoice
+})
+
+var ampView = new AmpView({
+  el: $('#amp'),
+  model: synthVoice
+})
+
+var portamentoView = new PortamentoView({
+  el: $('#portamento-effect'),
+  model: synthVoice
+})
+
+// synthVoice.on("change", function(){
+//   console.log("voice changed")
+
+// })
 
 
 

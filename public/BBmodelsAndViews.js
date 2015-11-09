@@ -96,21 +96,27 @@ var Voice = Backbone.Model.extend({
     oscillator2Interval: 2,
     oscillator2Shape: 'sawtooth',
     oscillator3Interval: 0,
-    oscillator3shape: 'triangle',
+    oscillator3Shape: 'triangle',
     portamento: .05,
     LFOfrequency: 5,
     LFOgain: 8,
     filterCutoff: 2000,
     filterResonance: 1,
-    filterEGattackTime: .1,
-    filterEGreleaseTime: .3,
+    filterEGattackTime: .3,
+    filterEGreleaseTime: .2,
     filterEGstartLevel: 0, // cutoff start controlled by filterEG
     filterEGstopLevel: 1, // cutoff stop controlled by filter ,
-    filterEGgain: 1,
+    filterEGgain: .5,
     EGattackTime: .3,
     EGreleaseTime: .3
   }
+
+  // set: function(attributes, options){
+  //   Backbone.Model.prototype.set.apply(this, arguments)
+  //   synthSystem.soundParams = this.attributes
+  // }
 })
+
 
 var SequenceLabelView = Backbone.View.extend({
   
@@ -492,16 +498,19 @@ var TempoSelectView = Backbone.View.extend({
 var FilterView = Backbone.View.extend({
   
   initialize: function(){
+    var self = this
     $('#filter-cutoff-slider').slider({
-      value: 2000,
+      value: self.model.get("filterCutoff"),
       min: 200,
-      max: 5000
+      max: 5000,
+      animate: true
     })
     // $('#cutoff').val(synthSystem.filtersConfig.LPF.filter.frequency.value + " Hz")
     $('#filter-resonance-slider').slider({
-      value: 1,
+      value: self.model.get("filterResonance"),
       min: .01,
-      max: 20
+      max: 20,
+      animate: true
     })
     this.adjustCutoff()
     this.listenTo(this.model, 'change', 'adjustCutoff')
@@ -523,12 +532,12 @@ var FilterView = Backbone.View.extend({
 
   sweep: function(){
     var self = this
-    console.log("ending...")
     $('#filter-cutoff-slider').slider({
       slide: function(event, ui){
         console.log(ui.value)
-        self.model.set('filterCutoff', ui.value)
+        self.model.set({filterCutoff: ui.value})
         synthSystem.filtersConfig.LPF.sweepCutoffFrequency(ui.value, .2)
+        synthSystem.soundParams.filterCutoff = ui.value
         self.adjustCutoff()
       }
     })
@@ -544,6 +553,150 @@ var FilterView = Backbone.View.extend({
         self.adjustCutoff()
       }
     })
+  }
+})
+
+var EGfilterView = Backbone.View.extend({
+
+  initialize: function(){
+    var self = this
+    $( '[data-role="filter-eg-slider"]').each(function() {
+      // create horizontal sliders
+      var sliderId = $(this).attr("id")
+      var value = self.model.get(sliderId)
+      console.log(value)
+      $( this ).slider({
+          value: value,
+          min: 0,
+          max: 1,
+          step: .01,
+          animate: true,
+          orientation: "vertical"
+      });
+    });
+    $('#filterEGgain').slider({
+      min: -1,
+      max: 1,
+      step: .01,
+      animate: true,
+      value: self.model.get('filterEGgain'),
+      orientation: "horizontal"
+    })
+    this.showGain()
+    // this.listenTo(this.model, 'change', 'syncSynth')
+  },
+
+  events: {
+    'slide [data-role="filter-eg-slider"]':'inputValue',
+    'click [data-role="filter-eg-slider"]':'inputValue'
+  },
+
+  inputValue: function(){
+    var self = this
+    $('[data-role="filter-eg-slider"]').slider({
+      slide: function(event, ui){
+        var sliderId = event.target.id
+        self.model.set(sliderId, ui.value)
+        console.log(ui.value)
+        synthSystem.soundParams[sliderId] = ui.value
+        if (sliderId === 'filterEGgain'){
+          self.showGain()
+        }
+      }
+    })
+  },
+
+  showGain: function(){
+    console.log("eg gain changed")
+    $('#eg-gain').val(this.model.get('filterEGgain'))
+    // synthSystem.soundParams = this.model.attributes
+  }
+
+})
+
+var AmpView = Backbone.View.extend({
+
+  initialize: function(){
+    var self = this
+    $( '[data-role="eg-slider"]').each(function() {
+      // create horizontal sliders
+      var sliderId = $(this).attr("id")
+      var value = self.model.get(sliderId)
+      console.log(value)
+      $( this ).slider({
+          value: value,
+          min: .01,
+          max: 1.5,
+          step: .01,
+          animate: true,
+          orientation: "horizontal"
+      });
+    }); 
+    this.showValues() 
+  },
+
+  events: {
+    'slide [data-role="eg-slider"]':'inputValue',
+    'click [data-role="eg-slider"]':'inputValue'
+  },
+
+  inputValue: function(){
+    var self = this
+    $('[data-role="eg-slider"]').slider({
+      slide: function(event, ui){
+        var sliderId = event.target.id
+        self.model.set(sliderId, ui.value)
+        console.log(ui.value)
+        synthSystem.soundParams[sliderId] = ui.value
+        self.showValues()
+      }
+    })
+  },
+
+  showValues: function(){
+    $('#attack-time').val(this.model.get('EGattackTime'))
+    $('#release-time').val(this.model.get('EGreleaseTime'))
+    synthSystem.syncValues()
+  }
+})
+
+
+var PortamentoView = Backbone.View.extend({
+
+  initialize: function(){
+    var self = this
+    var value = self.model.get('portamento') * 1000
+    $('#portamento').slider({
+      min: 0,
+      max: 1000,
+      step: 1,
+      animate: true,
+      value: value
+    })
+    this.showValue(value) 
+  },
+
+  events: {
+    'slide [data-role="slider"]':'inputValue',
+    'click [data-role="slider"]':'inputValue'
+  },
+
+  inputValue: function(){
+    var self = this
+    $('[data-role="slider"]').slider({
+      slide: function(event, ui){
+        var sliderId = event.target.id
+        self.model.set(sliderId, ui.value / 1000)
+        console.log(ui.value)
+        synthSystem.soundParams[sliderId] = ui.value / 1000
+        self.showValue(ui.value)
+      }
+    })
+  },
+
+  showValue: function(ms){
+    $('#portamento-time').val(ms + ' ms')
+    synthSystem.setPortamento(ms)
   }
 })
 

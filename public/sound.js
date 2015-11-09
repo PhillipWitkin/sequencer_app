@@ -19,6 +19,7 @@ var VCO = (function(context) {
     // });
   };
 
+
   VCO.prototype.setFrequency = function(frequency) {
     this.oscillator.frequency.setValueAtTime(frequency, context.currentTime);
   };
@@ -66,6 +67,7 @@ var EnvelopeGenerator = (function(context) {
     this.releaseTime = .3;
 
   };
+
 
 // 'triggers' have no 'off', it is engaged, then runs its course changing the volume
   EnvelopeGenerator.prototype.triggerOn = function(max, duration, min) {
@@ -227,35 +229,6 @@ var SynthSystem = function(){
 
   // shortcut to keep track of common params; fed into components as arguments
   this.soundParams = new Voice().attributes
-  // {
-  //   volume: .7,
-  //   oscillator2: {
-  //     interval: 2,
-  //     shape: 'sawtooth'
-  //   },
-  //   oscillator3: {
-  //     interval: 0,
-  //     shape: 'triangle'
-  //   },
-  //   portamento: .05,
-  //   LFO: {
-  //     frequency: 5,
-  //     gain: 8
-  //   },
-  //   filter: {
-  //     cutoff: 2000,
-  //     resonance: 1,
-  //     attackTime: .1,
-  //     releaseTime: .3,
-  //     startLevel: 0, // cutoff start controlled by filterEG
-  //     stopLevel: 1, // cutoff stop controlled by filterEG
-  //     gain: 1
-  //   },
-  //   EG: {
-  //     attackTime: .3,
-  //     releaseTime: .3
-  //   }
-  // }
 
 }
 
@@ -285,17 +258,22 @@ SynthSystem.prototype.setVolumeMax = function(level){
 }
 
 SynthSystem.prototype.setPortamento = function(milliseconds){
-  this.soundParams.portamento = milliseconds * 1000
+  this.soundParams.portamento = milliseconds / 1000
 }
 
 // computes adjusted values for filter envlope using gain
 SynthSystem.prototype.EGvaluesFilter = function(){
+  this.egsConfig.filterEG.attackTime = this.soundParams.filterEGattackTime
+  this.egsConfig.filterEG.releaseTime = this.soundParams.filterEGreleaseTime
   return [this.soundParams.filterCutoff * ( 1 + ((this.soundParams.filterEGstopLevel - 1) * this.soundParams.filterEGgain)),
   this.soundParams.filterCutoff * ( 1 + ((this.soundParams.filterEGstartLevel - 1) * this.soundParams.filterEGgain ))]
-  // return [
-  //   this.filtersConfig.LPF.EGvalues(this.soundParams.filterEGgain, this.soundParams.filterEGstopLevel),
-  //   this.filtersConfig.LPF.EGvalues(this.soundParams.filterEGgain, this.soundParams.filterEGstartLevel)
-  //   ]
+}
+
+SynthSystem.prototype.syncValues = function(){
+  this.egsConfig.EG.attackTime = this.soundParams.EGattackTime
+  this.egsConfig.EG.releaseTime = this.soundParams.EGreleaseTime
+  this.vcosConfig.oscillator2.oscillator.type = this.soundParams.oscillator2Shape
+  this.vcosConfig.oscillator3.oscillator.type = this.soundParams.oscillator3Shape
 }
 
 

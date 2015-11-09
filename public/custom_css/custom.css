@@ -40,3 +40,9 @@ html, body {
 #sequence-name {
   font-size: 1.75rem;
 }
+
+.filter-eg-slider {
+    height:80px; 
+    float:left; 
+    margin:20px
+}

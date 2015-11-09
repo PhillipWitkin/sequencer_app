@@ -84,46 +84,96 @@
 
     <div class="col-sm-4">
       <div class="well">
+        <!-- <h4> Filter </h4> -->
         <div class="row">
           <div class="well" id="filter">
             <div id="filter-cutoff">
+              <!-- <span> -->
               <!-- <div class="col-sm-6"> -->
+                <!-- <label for="cutoff">Filter Cutoff Frequency:</label> -->
+                <p class="ui-state-default ui-corner-all ui-helper-clearfix" style="padding:4px;">
+                  <!-- <span class="ui-icon ui-icon-volume-on" style="float:left; margin:-2px 5px 0 0;"></span> -->
                 <label for="cutoff">Filter Cutoff Frequency:</label>
                 <input type="text" id="cutoff" readonly>
                 <div id="filter-cutoff-slider"></div>
+                </p>
+              <!-- </span> -->
               <!-- </div> -->
             </div>
             <div id="filter-resonance">
-              <span><label for="resonance">Resonance:</label>
+              <!-- <span><label for="resonance">Resonance:</label> -->
+              <p class="ui-state-default ui-corner-all ui-helper-clearfix" style="padding:4px;">
+                  <!-- <span class="ui-icon ui-icon-volume-on" style="float:left; margin:-2px 5px 0 0;"></span> -->
+              Resonance
               <input type="text" id="resonance" readonly>
               <div id="filter-resonance-slider"></div>
-              </span>
+              </p>
             </div>
           </div>
         </div>
         <div class="row">
-          <div class="well">
-            <h4>Filter Envelope</h4>
+          <div class="well" id="filter-envelope">
+            <label for="filter-eg"> Filter Envelope Generator</label>
+            <div id="filter-eg">
+              <!-- <div class="col-sm-6"> -->
+              <p class="ui-state-default ui-corner-all ui-helper-clearfix" style="padding:4px;">Attack - Release - Start - Sustain
+                <!-- <label>Filter Envelope:</label> -->
+                <!-- <input type="text" id="filter-ar" readonly> -->
+                <span class="filter-eg-slider" data-role="filter-eg-slider" id="filterEGattackTime"></span>
+                <span class="filter-eg-slider" data-role="filter-eg-slider" id="filterEGreleaseTime"></span>
+                <span class="filter-eg-slider" data-role="filter-eg-slider" id="filterEGstartLevel"></span>
+                <span class="filter-eg-slider" data-role="filter-eg-slider" id="filterEGstopLevel"></span>
+              </p>
+              <!-- </div> -->
+            </div>
+            <div id="filter-eg-gain">
+              <p class="ui-state-default ui-corner-all ui-helper-clearfix" style="padding:4px;">
+                <label for="eg-gain">Filter EG gain:</label>
+                <input type="text" id="eg-gain" readonly>
+                <div id="filterEGgain" data-role="filter-eg-slider"></div>
+              </p>
+            </div>
           </div>
         </div>
-        <div class="row">
+ <!--        <div class="row">
           <div class="well">
             <h4>LFO</h4>
           </div>
-        </div>
+        </div> -->
       </div>
     </div>
 
-    <div class="col-sm-3">
+    <div class="col-sm-4">
       <div class="well">
         <div class="row">
           <div class="well">
-            <h4>Amplifier Envelope</h4>
+            <label for="amp"> Amplifier Envelope Generator</label>
+            <div id="amp">
+              <p class="ui-state-default ui-corner-all ui-helper-clearfix" style="padding:4px;">
+                <label for="eg-gain">Attack Time:</label>
+                <input type="text" id="attack-time" readonly>
+                <div id="EGattackTime" data-role="eg-slider"></div>
+              </p>
+              <p class="ui-state-default ui-corner-all ui-helper-clearfix" style="padding:4px;">
+                <label for="eg-gain">Release Time:</label>
+                <input type="text" id="release-time" readonly>
+                <div id="EGreleaseTime" data-role="eg-slider"></div>
+              </p>
+            </div>
           </div>
         </div>
+
         <div class="row">
           <div class="well">
-            <h4>Max Volume</h4>
+            <!-- <h5>LFO</h5> -->
+            <label for="portamento-effect"> Portamento </label>
+            <div id="portamento-effect">
+              <p class="ui-state-default ui-corner-all ui-helper-clearfix" style="padding:4px;">
+                <label for="portamento-time">Time:</label>
+                <input type="text" id="portamento-time" readonly>
+                <div id="portamento" data-role="slider"></div>
+              </p>
+            </div>
           </div>
         </div>
      
