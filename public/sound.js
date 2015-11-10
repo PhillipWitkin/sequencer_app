@@ -7,12 +7,14 @@ var VCO = (function(context) {
   function VCO(){
     this.oscillator = context.createOscillator();
     this.oscillator.type = 'sawtooth';
-    // this.oscillator.frequency.value = 440;
     this.oscillator.start(0);
 
     this.input = this.oscillator;
     this.output = this.oscillator;
 
+    this.interval = 0
+    // this.multiplier = Math.pow(Math.pow(2, 1/12), this.interval)  
+    // this.oscillator.frequency.value *= this.multiplier
     // var that = this;
     // $(document).bind('frequency', function (_, frequency) {
     //   that.setFrequency(frequency);
@@ -20,12 +22,16 @@ var VCO = (function(context) {
   };
 
 
-  VCO.prototype.setFrequency = function(frequency) {
-    this.oscillator.frequency.setValueAtTime(frequency, context.currentTime);
+  VCO.prototype.setFrequency = function(frequency, interval) {
+    // use equal tempermant to calculate the factor to multiply frequency,
+    // so that it is above/below a designated value by a number of half-steps give by interval
+    var multiplier = Math.pow(Math.pow(2, 1/12), this.interval || 0) 
+    this.oscillator.frequency.setValueAtTime(multiplier * frequency, context.currentTime);
   };
 
-  VCO.prototype.setFrequencyWithPortamento = function(frequency, time) {
-    this.oscillator.frequency.setTargetAtTime(frequency, context.currentTime, time)
+  VCO.prototype.setFrequencyWithPortamento = function(frequency, time, interval) {
+    var multiplier = Math.pow(Math.pow(2, 1/12), this.interval || 0)
+    this.oscillator.frequency.setTargetAtTime(multiplier * frequency, context.currentTime, time || .2)
   }
 
   VCO.prototype.connect = function(node) {
@@ -239,7 +245,7 @@ SynthSystem.prototype.connectNodes = function(){
   this.vcosConfig.oscillator3.connect(this.vcasConfig.vca.volume)
 
   this.lfosConfig.LFO.connect(this.lfosConfig.LFOgain.volume)   // route lfo to lfoGain
-  this.lfosConfig.LFOgain.connect(this.vcosConfig.oscillator2.oscillator.frequency) // route lfoGain to oscillator2 frequency
+  this.lfosConfig.LFOgain.connect(this.vcosConfig.oscillator3.oscillator.frequency) // route lfoGain to oscillator2 frequency
 
   this.egsConfig.EG.connect(this.vcasConfig.vca.amplitude)   // route EG to vca amplitude
 
@@ -272,8 +278,15 @@ SynthSystem.prototype.EGvaluesFilter = function(){
 SynthSystem.prototype.syncValues = function(){
   this.egsConfig.EG.attackTime = this.soundParams.EGattackTime
   this.egsConfig.EG.releaseTime = this.soundParams.EGreleaseTime
+
   this.vcosConfig.oscillator2.oscillator.type = this.soundParams.oscillator2Shape
+  this.vcosConfig.oscillator2.interval = this.soundParams.oscillator2Interval
+
   this.vcosConfig.oscillator3.oscillator.type = this.soundParams.oscillator3Shape
+  this.vcosConfig.oscillator3.interval = this.soundParams.oscillator3Interval
+
+  this.lfosConfig.LFO.setFrequencyWithPortamento(this.soundParams.LFOfrequency)
+  this.lfosConfig.LFOgain.volume.gain.value = this.soundParams.LFOgain
 }
 
 
@@ -308,7 +321,7 @@ myKeyboard.keyDown = function (note, frequency){
   console.log(frequency)
     
   synthSystem.vcosConfig.oscillator.setFrequency(frequency)
-  synthSystem.vcosConfig.oscillator2.setFrequency(frequency * 2)
+  synthSystem.vcosConfig.oscillator2.setFrequency(frequency)
   synthSystem.vcosConfig.oscillator3.setFrequencyWithPortamento(frequency, synthSystem.soundParams.portamento)
   synthSystem.egsConfig.EG.gateOn(synthSystem.soundParams.volume)
   var filterEGvalues = synthSystem.EGvaluesFilter()

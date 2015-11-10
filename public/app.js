@@ -132,7 +132,7 @@ function triggerNote(pitch, duration){
     console.log(duration)
 
     synthSystem.vcosConfig.oscillator.setFrequency(pitch)
-    synthSystem.vcosConfig.oscillator2.setFrequency(pitch * 2)
+    synthSystem.vcosConfig.oscillator2.setFrequency(pitch)
     // synthSystem.vcosConfig.oscillator3.setFrequency(pitch)
     synthSystem.vcosConfig.oscillator3.setFrequencyWithPortamento(pitch, synthSystem.soundParams.portamento)
  
@@ -245,29 +245,37 @@ var runSequence = function(model){
 
 } 
 
-var synthVoice = new Voice()
+var initSynthConsole = (function(){
+
+  var synthVoice = new Voice()
 
 
-var filterView = new FilterView({
-  el: $('#filter'),
-  model: synthVoice
-})
+  var filterView = new FilterView({
+    el: $('#filter'),
+    model: synthVoice
+  })
 
-var filterEGview = new EGfilterView({
-  el: $('#filter-envelope'),
-  model: synthVoice
-})
+  var filterEGview = new EGfilterView({
+    el: $('#filter-envelope'),
+    model: synthVoice
+  })
 
-var ampView = new AmpView({
-  el: $('#amp'),
-  model: synthVoice
-})
+  var ampView = new AmpView({
+    el: $('#amp'),
+    model: synthVoice
+  })
 
-var portamentoView = new PortamentoView({
-  el: $('#portamento-effect'),
-  model: synthVoice
-})
+  var portamentoView = new PortamentoView({
+    el: $('#portamento-effect'),
+    model: synthVoice
+  })
 
+  var oscillatorBank = new OscillatorView({
+    el: $('#VCO-group'),
+    model: synthVoice
+  })
+
+})()
 // synthVoice.on("change", function(){
 //   console.log("voice changed")
 

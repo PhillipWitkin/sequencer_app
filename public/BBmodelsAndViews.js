@@ -80,20 +80,13 @@ var SequencePlay = Sequence.extend({
 
   }
 
-  // pitch: function(){
-  //   return this.blocks[this.step].pitch
-  // },
-
-  // duration: function(){
-  //   return this.blocks[this.step].duration
-  // }
-
 })
+
 
 var Voice = Backbone.Model.extend({
   defaults: {
     volume: .7,
-    oscillator2Interval: 2,
+    oscillator2Interval: 12,
     oscillator2Shape: 'sawtooth',
     oscillator3Interval: 0,
     oscillator3Shape: 'triangle',
@@ -536,7 +529,7 @@ var FilterView = Backbone.View.extend({
       slide: function(event, ui){
         console.log(ui.value)
         self.model.set({filterCutoff: ui.value})
-        synthSystem.filtersConfig.LPF.sweepCutoffFrequency(ui.value, .2)
+        synthSystem.filtersConfig.LPF.setCutoffFrequency(ui.value)
         synthSystem.soundParams.filterCutoff = ui.value
         self.adjustCutoff()
       }
@@ -569,7 +562,7 @@ var EGfilterView = Backbone.View.extend({
           value: value,
           min: 0,
           max: 1,
-          step: .01,
+          step: .02,
           animate: true,
           orientation: "vertical"
       });
@@ -577,7 +570,7 @@ var EGfilterView = Backbone.View.extend({
     $('#filterEGgain').slider({
       min: -1,
       max: 1,
-      step: .01,
+      step: .05,
       animate: true,
       value: self.model.get('filterEGgain'),
       orientation: "horizontal"
@@ -700,4 +693,95 @@ var PortamentoView = Backbone.View.extend({
   }
 })
 
+var OscillatorView = Backbone.View.extend({
+
+  initialize: function(){
+    var self = this
+    $( '[data-role="VCO-interval-slider"]').each(function() {
+      // create horizontal sliders
+      var sliderId = $(this).attr("id")
+      var value = self.model.get(sliderId)
+      console.log(sliderId)
+      $( this ).slider({
+          value: value,
+          min: -24,
+          max: 24,
+          step: 1,
+          // animate: true,
+          orientation: "horizontal"
+      });
+      self.showValue(sliderId)
+    }); 
+
+  },
+
+  events: {
+    'slide [data-role="VCO-interval-slider"]':'inputValue',
+    'click [data-role="VCO-interval-slider"]':'inputValue'
+  },
+
+  inputValue: function(){
+    var self = this
+    $('[data-role="VCO-interval-slider"]').slider({
+      slide: function(event, ui){
+        var sliderId = event.target.id
+        self.model.set(sliderId, ui.value)
+        console.log(ui.value)
+        synthSystem.soundParams[sliderId] = ui.value
+        self.showValue(sliderId)
+      }
+    })
+  },
+
+  showValue: function(attribute){
+    var unit = (attribute === 'oscillator2Interval' || attribute === 'oscillator3Interval') ? ' semitones' : ' waveform';
+    var self = this
+    var selector = '[data-id="' + attribute + '"]'
+    console.log(selector)
+    $(selector).val(self.model.get(attribute) + unit)
+    synthSystem.soundParams[attribute] = this.model.get(attribute)
+    synthSystem.syncValues()
+    // this.changeIntervals()
+  }
+
+  // changeIntervals: function(){
+  //   synthSystem.vcosConfig.oscillator2.oscillator.frequency = synthSystem.vcosConfig.oscillator2.oscillator.frequency.value * Math.pow(Math.pow(2, 1/12), synthSystem.soundParams.oscillator2Interval)
+  //   synthSystem.vcosConfig.oscillator3.setFrequencyWithPortamento(synthSystem.vcosConfig.oscillator3.oscillator.frequency.value / Math.pow(Math.pow(2, 1/12), this.model.get('oscillator3Interval')))
+  // }
+
+})
+
+// var LFOView = Backbone.View.extend({
+
+//   initialize: function(){
+//     var self = this
+
+//     this.showValue(attribute) 
+//   },
+
+//   events: {
+//     'slide [data-role="slider"]':'inputValue',
+//     'click [data-role="slider"]':'inputValue'
+//   },
+
+//   inputValue: function(){
+//     var self = this
+//     $('[data-role="slider"]').slider({
+//       slide: function(event, ui){
+//         var sliderId = event.target.id
+//         self.model.set(sliderId, ui.value)
+//         console.log(ui.value)
+//         synthSystem.soundParams[sliderId] = ui.value
+//         self.showValue(sliderId)
+//       }
+//     })
+//   },
+
+//   showValue: function(attribute){
+//     var unit = (attribute === 'LFOfrequency') ? ' Hz' : ' db/v'
+//     $('#' + attribute).val(this.model.get(attribute) + unit)
+
+//   }
+
+// })
 
