@@ -284,6 +284,8 @@ SynthSystem.prototype.syncValues = function(){
   this.egsConfig.EG.attackTime = this.soundParams.EGattackTime
   this.egsConfig.EG.releaseTime = this.soundParams.EGreleaseTime
 
+  this.vcosConfig.oscillator.oscillator.type = this.soundParams.oscillatorShape
+
   this.vcosConfig.oscillator2.oscillator.type = this.soundParams.oscillator2Shape
   this.vcosConfig.oscillator2.interval = this.soundParams.oscillator2Interval
 

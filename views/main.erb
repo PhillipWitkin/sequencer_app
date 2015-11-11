@@ -69,14 +69,23 @@
         <div class="panel panel-default">
           <div class="panel-heading" role="tab" id="osc-1-heading">
             <h6 class="panel-title">
-              <a role="button" data-toggle="collapse" aria-expanded="true" aria-controls="osc-1" href="#">Oscillator 1</a>
+              <a role="button" data-toggle="collapse" aria-expanded="true" aria-controls="osc-1" href="#osc-1">Oscillator 1</a>
             </h6>
           </div>
           <div id="osc-1" class="panel-collapse collapse" role="tabpanel" aria-labelledby="osc-1-heading">
             <div class="panel-body">
 
               <div class="row">
-                <!-- <div class="well"></div> -->
+                <div class="well">
+                  <p class="ui-state-default ui-corner-all ui-helper-clearfix" style="padding:4px;"> Waveform 
+                    <select class="form-control" data-role="shape-select" id="oscillatorShape">
+                      <option>sine</option>
+                      <option>triangle</option>
+                      <option>sawtooth</option>
+                      <option>square</option>
+                    </select>
+                  </p>
+                </div>
               </div>
             
             </div>
@@ -98,6 +107,14 @@
                     <label for="oscillator2Interval">Interval:</label>
                     <input type="text" data-id="oscillator2Interval" readonly>
                     <div id="oscillator2Interval" data-role="VCO-interval-slider"></div>
+                  </p>
+                  <p class="ui-state-default ui-corner-all ui-helper-clearfix" style="padding:4px;"> Waveform 
+                    <select class="form-control" data-role="shape-select" id="oscillator2Shape">
+                      <option>sine</option>
+                      <option>triangle</option>
+                      <option>sawtooth</option>
+                      <option>square</option>
+                    </select>
                   </p>
                 </div>
               </div>
@@ -121,6 +138,14 @@
                     <label for="oscillator3Interval">Interval:</label>
                     <input type="text" data-id="oscillator3Interval" readonly>
                     <div id="oscillator3Interval" data-role="VCO-interval-slider"></div>
+                  </p>
+                  <p class="ui-state-default ui-corner-all ui-helper-clearfix" style="padding:4px;"> Waveform 
+                    <select class="form-control" data-role="shape-select" id="oscillator3Shape">
+                      <option>sine</option>
+                      <option>triangle</option>
+                      <option>sawtooth</option>
+                      <option>square</option>
+                    </select>
                   </p>
                 </div>
               </div>

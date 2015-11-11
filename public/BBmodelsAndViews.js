@@ -86,6 +86,7 @@ var SequencePlay = Sequence.extend({
 var Voice = Backbone.Model.extend({
   defaults: {
     volume: .7,
+    oscillatorShape: 'square',
     oscillator2Interval: 12,
     oscillator2Shape: 'sawtooth',
     oscillator3Interval: 0,
@@ -694,6 +695,7 @@ var PortamentoView = Backbone.View.extend({
   }
 })
 
+
 var OscillatorView = Backbone.View.extend({
 
   initialize: function(){
@@ -713,12 +715,13 @@ var OscillatorView = Backbone.View.extend({
       });
       self.showValue(sliderId)
     }); 
-
+    this.showValue('oscillatorShape')
   },
 
   events: {
     'slide [data-role="VCO-interval-slider"]':'inputValue',
-    'click [data-role="VCO-interval-slider"]':'inputValue'
+    'click [data-role="VCO-interval-slider"]':'inputValue',
+    'click [data-role="shape-select"]':'selectShape'
   },
 
   inputValue: function(){
@@ -740,9 +743,17 @@ var OscillatorView = Backbone.View.extend({
     var selector = '[data-id="' + attribute + '"]'
     console.log(selector)
     $(selector).val(self.model.get(attribute) + unit)
+    $('[data-role="shape-select"]').val(self.model.get(attribute))//for wave shape
     synthSystem.soundParams[attribute] = this.model.get(attribute)
     synthSystem.syncValues()
     // this.changeIntervals()
+  },
+
+  selectShape: function(){
+    var value = $('[data-role="shape-select"]').val()
+    var attribute = $('[data-role="shape-select"]').attr("id")
+    this.model.set(attribute, value)
+    this.showValue(attribute)
   },
 
   changeIntervals: function(){
