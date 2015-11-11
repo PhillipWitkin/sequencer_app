@@ -496,6 +496,7 @@ var FilterView = Backbone.View.extend({
       value: self.model.get("filterCutoff"),
       min: 200,
       max: 5000,
+      step: 50,
       animate: true
     })
     // $('#cutoff').val(synthSystem.filtersConfig.LPF.filter.frequency.value + " Hz")
@@ -529,7 +530,7 @@ var FilterView = Backbone.View.extend({
       slide: function(event, ui){
         console.log(ui.value)
         self.model.set({filterCutoff: ui.value})
-        synthSystem.filtersConfig.LPF.setCutoffFrequency(ui.value)
+        synthSystem.filtersConfig.LPF.sweepCutoffFrequency(ui.value, .1)
         synthSystem.soundParams.filterCutoff = ui.value
         self.adjustCutoff()
       }
@@ -742,46 +743,64 @@ var OscillatorView = Backbone.View.extend({
     synthSystem.soundParams[attribute] = this.model.get(attribute)
     synthSystem.syncValues()
     // this.changeIntervals()
-  }
+  },
 
-  // changeIntervals: function(){
-  //   synthSystem.vcosConfig.oscillator2.oscillator.frequency = synthSystem.vcosConfig.oscillator2.oscillator.frequency.value * Math.pow(Math.pow(2, 1/12), synthSystem.soundParams.oscillator2Interval)
-  //   synthSystem.vcosConfig.oscillator3.setFrequencyWithPortamento(synthSystem.vcosConfig.oscillator3.oscillator.frequency.value / Math.pow(Math.pow(2, 1/12), this.model.get('oscillator3Interval')))
-  // }
+  changeIntervals: function(){
+    synthSystem.vcosConfig.oscillator2.changeInterval(synthSystem.soundParams.oscillator2Interval)
+    // synthSystem.vcosConfig.oscillator3.setFrequencyWithPortamento(synthSystem.vcosConfig.oscillator3.oscillator.frequency.value / Math.pow(Math.pow(2, 1/12), this.model.get('oscillator3Interval')))
+  }
 
 })
 
-// var LFOView = Backbone.View.extend({
+var LFOView = Backbone.View.extend({
 
-//   initialize: function(){
-//     var self = this
+  initialize: function(){
+    var self = this
+    $('#LFOfrequency').slider({
+      min: .1,
+      max: 10,
+      step: .1,
+      animate: true,
+      value: self.model.get('LFOfrequency'),
+      orientation: 'horizontal'
+    })
 
-//     this.showValue(attribute) 
-//   },
+    $('#LFOgain').slider({
+      min: 0,
+      max: 100,
+      step: 1,
+      animate: true,
+      value: self.model.get('LFOgain'),
+      orientation: 'horizontal'
+    })
 
-//   events: {
-//     'slide [data-role="slider"]':'inputValue',
-//     'click [data-role="slider"]':'inputValue'
-//   },
+    this.showValues() 
+  },
 
-//   inputValue: function(){
-//     var self = this
-//     $('[data-role="slider"]').slider({
-//       slide: function(event, ui){
-//         var sliderId = event.target.id
-//         self.model.set(sliderId, ui.value)
-//         console.log(ui.value)
-//         synthSystem.soundParams[sliderId] = ui.value
-//         self.showValue(sliderId)
-//       }
-//     })
-//   },
+  events: {
+    'slide [data-role="LFO-slider"]':'inputValue',
+    'click [data-role="LFO-slider"]':'inputValue'
+  },
 
-//   showValue: function(attribute){
-//     var unit = (attribute === 'LFOfrequency') ? ' Hz' : ' db/v'
-//     $('#' + attribute).val(this.model.get(attribute) + unit)
+  inputValue: function(){
+    var self = this
+    $('[data-role="LFO-slider"]').slider({
+      slide: function(event, ui){
+        var sliderId = event.target.id
+        self.model.set(sliderId, ui.value)
+        console.log(ui.value)
+        synthSystem.soundParams[sliderId] = ui.value
+        synthSystem.syncValues()
+        self.showValues()
+      }
+    })
+  },
 
-//   }
+  showValues: function(attribute){
+    // var unit = (attribute === 'LFOfrequency') ? ' Hz' : ' db/v'
+    $('[data-id="LFOfrequency"]').val(this.model.get('LFOfrequency') + ' Hz')
+    $('[data-id="LFOgain"]').val(this.model.get('LFOgain') + ' db/v')
+  }
 
-// })
+})
 

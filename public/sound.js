@@ -34,6 +34,10 @@ var VCO = (function(context) {
     this.oscillator.frequency.setTargetAtTime(multiplier * frequency, context.currentTime, time || .2)
   }
 
+  VCO.prototype.changeInterval = function(interval){
+    this.oscillator.frequency.value *= Math.pow(Math.pow(2, 1/12), interval)
+  }
+
   VCO.prototype.connect = function(node) {
     // if (node.hasOwnProperty('input')) {
     //   this.output.connect(node.input);
@@ -207,6 +211,7 @@ var SynthSystem = function(){
     }
 
     lfoComponents.LFO.oscillator.frequency.value = 5
+    lfoComponents.LFO.oscillator.type = "triangle"
     lfoComponents.LFOgain.volume.gain.value = 8
 
     return lfoComponents

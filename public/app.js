@@ -275,6 +275,11 @@ var initSynthConsole = (function(){
     model: synthVoice
   })
 
+  var LFOpanel = new LFOView({
+    el: $('#LFO'),
+    model: synthVoice
+  })
+
 })()
 // synthVoice.on("change", function(){
 //   console.log("voice changed")

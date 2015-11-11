@@ -89,13 +89,13 @@
               <a role="button" data-toggle="collapse" aria-expanded="true" aria-controls="osc-2" href="#osc-2">Oscillator 2</a>
             </h6>
           </div>
-          <div id="osc-2" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="osc-2-heading">
+          <div id="osc-2" class="panel-collapse collapse" role="tabpanel" aria-labelledby="osc-2-heading">
             <div class="panel-body">
 
               <div class="row">
                 <div class="well">
                   <p class="ui-state-default ui-corner-all ui-helper-clearfix" style="padding:4px;">
-                    <label for="cutoff">Interval:</label>
+                    <label for="oscillator2Interval">Interval:</label>
                     <input type="text" data-id="oscillator2Interval" readonly>
                     <div id="oscillator2Interval" data-role="VCO-interval-slider"></div>
                   </p>
@@ -118,10 +118,42 @@
               <div class="row">
                 <div class="well">
                   <p class="ui-state-default ui-corner-all ui-helper-clearfix" style="padding:4px;">
-                    <label for="cutoff">Interval:</label>
+                    <label for="oscillator3Interval">Interval:</label>
                     <input type="text" data-id="oscillator3Interval" readonly>
                     <div id="oscillator3Interval" data-role="VCO-interval-slider"></div>
                   </p>
+                </div>
+              </div>
+            
+            </div>
+          </div>
+        </div>
+
+        <div class="panel panel-default">
+          <div class="panel-heading" role="tab" id="LFO-heading">
+            <h6 class="panel-title">
+              <a role="button" data-toggle="collapse" aria-expanded="true" aria-controls="LFO" href="#LFO">LFO</a>
+            </h6>
+          </div>
+          <div id="LFO" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="LFO-heading">
+            <div class="panel-body">
+
+              <div class="row">
+                <div class="well">
+                  <div>
+                    <p class="ui-state-default ui-corner-all ui-helper-clearfix" style="padding:4px;">
+                      <label for="LFOfrequency">Frequency:</label>
+                      <input type="text" data-id="LFOfrequency" readonly>
+                      <div id="LFOfrequency" data-role="LFO-slider"></div>
+                    </p>
+                  </div>
+                  <div>
+                    <p class="ui-state-default ui-corner-all ui-helper-clearfix" style="padding:4px;">
+                      <label for="LFOgain">Gain:</label>
+                      <input type="text" data-id="LFOgain" readonly>
+                      <div id="LFOgain" data-role="LFO-slider"></div>
+                    </p>
+                  </div>                
                 </div>
               </div>
             
@@ -160,8 +192,8 @@
                         <!-- <span><label for="resonance">Resonance:</label> -->
                         <p class="ui-state-default ui-corner-all ui-helper-clearfix" style="padding:4px;">
                         Resonance
-                        <input type="text" id="resonance" readonly>
-                        <div id="filter-resonance-slider"></div>
+                          <input type="text" id="resonance" readonly>
+                          <div id="filter-resonance-slider"></div>
                         </p>
                       </div>
 
