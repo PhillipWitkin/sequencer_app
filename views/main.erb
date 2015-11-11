@@ -244,22 +244,31 @@
                       <!-- <label for="filter-eg"> Filter Envelope Generator</label> -->
                       <div id="filter-eg">
                         <!-- <div class="col-sm-6"> -->
-                        <p class="ui-state-default ui-corner-all ui-helper-clearfix" style="padding:4px;">Attack - Release - Start - Sustain
+                        <p class="ui-state-default ui-corner-all ui-helper-clearfix" style="padding:4px;">
                           <!-- <label>Filter Envelope:</label> -->
                           <!-- <input type="text" id="filter-ar" readonly> -->
-                          <span class="filter-eg-slider" data-role="filter-eg-slider" id="filterEGattackTime"></span>
-                          <span class="filter-eg-slider" data-role="filter-eg-slider" id="filterEGreleaseTime"></span>
-                          <span class="filter-eg-slider" data-role="filter-eg-slider" id="filterEGstartLevel"></span>
-                          <span class="filter-eg-slider" data-role="filter-eg-slider" id="filterEGstopLevel"></span>
+                            Attack - Release - Start - Stop
                         </p>
+                          <div>
+                            <span class="filter-eg-slider" data-role="filter-eg-slider" id="filterEGattackTime"></span>
+                          </div>
+                          <div>
+                            <span class="filter-eg-slider" data-role="filter-eg-slider" id="filterEGreleaseTime"></span>
+                          </div>
+                          <div>                            
+                            <span class="filter-eg-slider" data-role="filter-eg-slider" id="filterEGstartLevel"></span>
+                          </div>
+                          <div>                            
+                            <span class="filter-eg-slider" data-role="filter-eg-slider" id="filterEGstopLevel"></span>
+                          </div>
                         <!-- </div> -->
-                      </div>
                       <div id="filter-eg-gain">
-                        <p class="ui-state-default ui-corner-all ui-helper-clearfix" style="padding:4px;">
-                          <label for="eg-gain">Filter EG gain:</label>
+                          <!-- <label for="eg-gain">Filter EG gain:</label> -->
                           <input type="text" id="eg-gain" readonly>
                           <div id="filterEGgain" data-role="filter-eg-slider"></div>
+                        <p class="ui-state-default ui-corner-all ui-helper-clearfix" style="padding:4px;">EG gain
                         </p>
+                      </div>
                       </div>
                     </div>
 
