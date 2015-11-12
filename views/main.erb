@@ -78,7 +78,7 @@
               <div class="row">
                 <div class="well">
                   <p class="ui-state-default ui-corner-all ui-helper-clearfix" style="padding:4px;"> Waveform 
-                    <select class="form-control" data-role="shape-select" id="oscillatorShape">
+                    <select class="form-control" data-role="shape-select" id="oscillatorShape" data-id="oscillatorShape">
                       <option>sine</option>
                       <option>triangle</option>
                       <option>sawtooth</option>
@@ -109,7 +109,7 @@
                     <div id="oscillator2Interval" data-role="VCO-interval-slider"></div>
                   </p>
                   <p class="ui-state-default ui-corner-all ui-helper-clearfix" style="padding:4px;"> Waveform 
-                    <select class="form-control" data-role="shape-select" id="oscillator2Shape">
+                    <select class="form-control" data-role="shape-select" id="oscillator2Shape" data-id="oscillator2Shape">
                       <option>sine</option>
                       <option>triangle</option>
                       <option>sawtooth</option>
@@ -140,7 +140,7 @@
                     <div id="oscillator3Interval" data-role="VCO-interval-slider"></div>
                   </p>
                   <p class="ui-state-default ui-corner-all ui-helper-clearfix" style="padding:4px;"> Waveform 
-                    <select class="form-control" data-role="shape-select" id="oscillator3Shape">
+                    <select class="form-control" data-role="shape-select" id="oscillator3Shape" data-id="oscillator3Shape">
                       <option>sine</option>
                       <option>triangle</option>
                       <option>sawtooth</option>
@@ -251,24 +251,24 @@
                         </p>
                           <div>
                             <span class="filter-eg-slider" data-role="filter-eg-slider" id="filterEGattackTime"></span>
-                          </div>
-                          <div>
+                          <!-- </div> -->
+                          <!-- <div> -->
                             <span class="filter-eg-slider" data-role="filter-eg-slider" id="filterEGreleaseTime"></span>
-                          </div>
-                          <div>                            
+                          <!-- </div> -->
+                          <!-- <div>                             -->
                             <span class="filter-eg-slider" data-role="filter-eg-slider" id="filterEGstartLevel"></span>
-                          </div>
-                          <div>                            
+                          <!-- </div> -->
+                          <!-- <div>                             -->
                             <span class="filter-eg-slider" data-role="filter-eg-slider" id="filterEGstopLevel"></span>
                           </div>
                         <!-- </div> -->
+                      </div>
                       <div id="filter-eg-gain">
-                          <!-- <label for="eg-gain">Filter EG gain:</label> -->
+                        <p class="ui-state-default ui-corner-all ui-helper-clearfix" style="padding:4px;">
+                        </p>
+                          <label for="eg-gain">Filter EG gain:</label>
                           <input type="text" id="eg-gain" readonly>
                           <div id="filterEGgain" data-role="filter-eg-slider"></div>
-                        <p class="ui-state-default ui-corner-all ui-helper-clearfix" style="padding:4px;">EG gain
-                        </p>
-                      </div>
                       </div>
                     </div>
 

@@ -740,13 +740,12 @@ var OscillatorView = Backbone.View.extend({
   },
 
   showValue: function(attribute){
-    var unit = (attribute === 'oscillator2Interval' || attribute === 'oscillator3Interval') ? ' semitones' : ' waveform';
-    var self = this
-    var selector = '[data-id="' + attribute + '"]'
-    var selectorShape = '#' + attribute
-    console.log(selector)
-    $(selector).val(self.model.get(attribute) + unit)
-    $(selectorShape).val(self.model.get(attribute))//for wave shape
+    var value = this.model.get(attribute)
+    var selector = '[data-id="' + attribute + '"]';
+    if (attribute === 'oscillator2Interval' || attribute === 'oscillator3Interval') {
+      value = value + " semitones" 
+    }
+    $(selector).val(value)//for wave shape and interval
     synthSystem.soundParams[attribute] = this.model.get(attribute)
     synthSystem.syncValues()
     // this.changeIntervals()

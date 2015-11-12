@@ -74,6 +74,10 @@ var VCA = (function(context) {
 var EnvelopeGenerator = (function(context) {
   function EnvelopeGenerator(){
     this.attackTime = .3;
+    this.decayTime = .1;
+
+    this.sustainLevel = .4
+    
     this.releaseTime = .3;
 
   };
@@ -107,6 +111,29 @@ var EnvelopeGenerator = (function(context) {
     this.param.linearRampToValueAtTime(min || 0, now + .01 + this.releaseTime)
     return context.currentTime
   }
+
+  EnvelopeGenerator.prototype.ADSRgateOn = function(max, min){
+    console.log("EG ADSR gate on")
+    now = context.currentTime;
+    this.param.cancelScheduledValues(now);
+    this.param.setValueAtTime(min || 0, now);
+    this.param.linearRampToValueAtTime(max, now + this.attackTime);
+    this.param.setTargetAtTime(this.sustainLevel, now + this.attackTime + this.decayTime, this.decayTime)
+    return context.currentTime    
+  }
+
+  // 'triggers' have no 'off', it is engaged, then runs its course changing the volume
+  EnvelopeGenerator.prototype.ADSRtriggerOn = function(max, duration, min) {
+    console.log("EG trigger on")
+    now = context.currentTime;
+    this.param.cancelScheduledValues(now);
+    this.param.setTargetAtTime(min || 0, now, .01);
+    this.param.linearRampToValueAtTime(max, now + this.attackTime);
+    this.param.setTargetAtTime(this.sustainLevel, now + this.attackTime + this.decayTime, this.decayTime)
+    // this.param.setValueAtTime(max, now + this.attackTime + duration/1000)
+    this.param.setTargetAtTime(min || 0, now + this.attackTime + this.decayTime + duration/1000, this.releaseTime);
+  };
+
 
   EnvelopeGenerator.prototype.connect = function(param) {
     this.param = param;
@@ -250,7 +277,7 @@ SynthSystem.prototype.connectNodes = function(){
   this.vcosConfig.oscillator3.connect(this.vcasConfig.vca.volume)
 
   this.lfosConfig.LFO.connect(this.lfosConfig.LFOgain.volume)   // route lfo to lfoGain
-  this.lfosConfig.LFOgain.connect(this.vcosConfig.oscillator3.oscillator.frequency) // route lfoGain to oscillator2 frequency
+  this.lfosConfig.LFOgain.connect(this.vcosConfig.oscillator2.oscillator.frequency) // route lfoGain to oscillator2 frequency
 
   this.egsConfig.EG.connect(this.vcasConfig.vca.amplitude)   // route EG to vca amplitude
 
@@ -331,6 +358,7 @@ myKeyboard.keyDown = function (note, frequency){
   synthSystem.vcosConfig.oscillator2.setFrequency(frequency)
   synthSystem.vcosConfig.oscillator3.setFrequencyWithPortamento(frequency, synthSystem.soundParams.portamento)
   synthSystem.egsConfig.EG.gateOn(synthSystem.soundParams.volume)
+  // synthSystem.egsConfig.EG.ADSRgateOn(synthSystem.soundParams.volume)
   var filterEGvalues = synthSystem.EGvaluesFilter()
   synthSystem.egsConfig.filterEG.gateOn(filterEGvalues[0], filterEGvalues[1])
 
