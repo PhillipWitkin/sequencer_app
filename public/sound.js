@@ -190,18 +190,6 @@ var BQF = (function(context) {
 
 
 
-var myKeyboard = new QwertyHancock({
-  id: 'keyboard',
-  width: 900,
-  height: 110,
-  octaves: 4,
-  startNote: 'A2',
-  whiteNotesColour: 'white',
-  blackNotesColour: 'black',
-  activeColour: 'blue'
-})
-
-
 
 // constructor function which designates and groups the relevant parts of the synthesizer
 var SynthSystem = function(){
@@ -223,8 +211,15 @@ var SynthSystem = function(){
   this.vcasConfig = (function(){
     // primary amplifier node
     var amplifers = {
-      vca: new VCA
+      vca: new VCA,
+      oscillator1gain: new VCA,
+      oscillator2gain: new VCA,
+      oscillator3gain: new VCA
     }
+    amplifers.oscillator1gain.volume.gain.value = 1
+    amplifers.oscillator2gain.volume.gain.value = 1
+    amplifers.oscillator3gain.volume.gain.value = 1
+
     return amplifers
   })()
 
@@ -232,9 +227,9 @@ var SynthSystem = function(){
     // low frequency oscillators, for modulation
     var lfoComponents = {
       LFO: new VCO,
-      LFOgain: new VCA,
-      LFOtremolo: new VCO,
-      LFOtremeloGain: new VCA
+      LFOgain: new VCA
+      // LFOtremolo: new VCO,
+      // LFOtremeloGain: new VCA
     }
 
     lfoComponents.LFO.oscillator.frequency.value = 5
@@ -272,9 +267,13 @@ var SynthSystem = function(){
 
 SynthSystem.prototype.connectNodes = function(){
   // route pitch oscillators to vca
-  this.vcosConfig.oscillator.connect(this.vcasConfig.vca.volume)
-  this.vcosConfig.oscillator2.connect(this.vcasConfig.vca.volume)
-  this.vcosConfig.oscillator3.connect(this.vcasConfig.vca.volume)
+  this.vcosConfig.oscillator.connect(this.vcasConfig.oscillator1gain.volume)
+  this.vcosConfig.oscillator2.connect(this.vcasConfig.oscillator2gain.volume)
+  this.vcosConfig.oscillator3.connect(this.vcasConfig.oscillator3gain.volume)
+
+  this.vcasConfig.oscillator1gain.connect(this.vcasConfig.vca.volume)
+  this.vcasConfig.oscillator2gain.connect(this.vcasConfig.vca.volume)
+  this.vcasConfig.oscillator3gain.connect(this.vcasConfig.vca.volume)
 
   this.lfosConfig.LFO.connect(this.lfosConfig.LFOgain.volume)   // route lfo to lfoGain
   this.lfosConfig.LFOgain.connect(this.vcosConfig.oscillator2.oscillator.frequency) // route lfoGain to oscillator2 frequency
@@ -348,6 +347,19 @@ var maxVolume = 1
 // instantiate the SynthSystem constructor, then connect the audio nodes
 var synthSystem = new SynthSystem()
 synthSystem.connectNodes()
+
+
+// creates the keyboard on screen
+var myKeyboard = new QwertyHancock({
+  id: 'keyboard',
+  width: 900,
+  height: 110,
+  octaves: 4,
+  startNote: 'A2',
+  whiteNotesColour: 'white',
+  blackNotesColour: 'black',
+  activeColour: 'blue'
+})
 
 // function for when note on keyboard is clicked
 myKeyboard.keyDown = function (note, frequency){
