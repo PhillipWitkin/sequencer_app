@@ -716,6 +716,8 @@ var OscillatorView = Backbone.View.extend({
       self.showValue(sliderId)
     }); 
     this.showValue('oscillatorShape')
+    this.showValue('oscillator2Shape')
+    this.showValue('oscillator3Shape')
   },
 
   events: {
