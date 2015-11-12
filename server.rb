@@ -22,9 +22,79 @@ class Sequence < ActiveRecord::Base
       record.errors.add(attr, "is a guest, and guests cannot save") if record.user.username == "guest"
     end
   end
-  # def sequence_belongs_to_current_user?
-  #   :user_id == current_user[:id] 
+
+  # def self.default_1(user)
+  #   default1 = self.new(
+  #     user_id: user[:id],
+  #     sequence_name: "Octave Shift",
+
+  #     sb_1_pitch: "440",
+  #     sb_1_duration: "1/4",
+  #     sb_1_note: "A4",
+
+  #     sb_2_pitch: "440",
+  #     sb_2_duration: "1/4",
+  #     sb_2_note: "A4",
+
+  #     sb_3_pitch: "880",
+  #     sb_3_duration: "1/4",
+  #     sb_3_note: "A5",
+
+  #     sb_4_pitch: "880",
+  #     sb_4_duration: "1/4",
+  #     sb_4_note: "A5",
+
+  #     sb_5_pitch: "440",
+  #     sb_5_duration: "1/4",
+  #     sb_5_note: "A4",
+
+  #     sb_6_pitch: "440",
+  #     sb_6_duration: "1/4",
+  #     sb_6_note: "A4",
+
+  #     sb_7_pitch: "880",
+  #     sb_7_duration: "1/4",
+  #     sb_7_note: "A5",
+
+  #     sb_8_pitch: "880",
+  #     sb_8_duration: "1/4",
+  #     sb_8_note: "A5",
+
+  #     sb_9_pitch: "440",
+  #     sb_9_duration: "1/4",
+  #     sb_9_note: "A4",
+
+  #     sb_10_pitch: "440",
+  #     sb_10_duration: "1/4",
+  #     sb_10_note: "A4",
+
+  #     sb_11_pitch: "880",
+  #     sb_11_duration: "1/4",
+  #     sb_11_note: "A5",
+
+  #     sb_12_pitch: "880",
+  #     sb_12_duration: "1/4",
+  #     sb_12_note: "A5",
+
+  #     sb_13_pitch: "440",
+  #     sb_13_duration: "1/4",
+  #     sb_13_note: "A4",
+
+  #     sb_14_pitch: "440",
+  #     sb_14_duration: "1/4",
+  #     sb_14_note: "A4",
+
+  #     sb_15_pitch: "880",
+  #     sb_15_duration: "1/4",
+  #     sb_15_note: "A5",
+
+  #     sb_16_pitch: "880",
+  #     sb_16_duration: "1/4",
+  #     sb_16_note: "A5"
+  #   )
+  #   return default1 
   # end
+
 end
 
 class User < ActiveRecord::Base
