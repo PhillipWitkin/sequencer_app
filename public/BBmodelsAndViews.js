@@ -97,8 +97,8 @@ var Voice = Backbone.Model.extend({
     filterCutoff: 2000,
     filterResonance: 1,
     filterEGattackTime: .3,
-    filterEGreleaseTime: .2,
-    filterEGstartLevel: 0, // cutoff start controlled by filterEG
+    filterEGreleaseTime: .3,
+    filterEGstartLevel: .06, // cutoff start controlled by filterEG
     filterEGstopLevel: 1, // cutoff stop controlled by filter ,
     filterEGgain: .5,
     EGattackTime: .3,
@@ -562,7 +562,7 @@ var EGfilterView = Backbone.View.extend({
       console.log(value)
       $( this ).slider({
           value: value,
-          min: 0,
+          min: .06,
           max: 1,
           step: .02,
           animate: true,

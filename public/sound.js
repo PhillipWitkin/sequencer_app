@@ -373,7 +373,8 @@ myKeyboard.keyDown = function (note, frequency){
 myKeyboard.keyUp = function (note, frequency){
 
   synthSystem.egsConfig.EG.gateOff()
-  synthSystem.egsConfig.filterEG.gateOff()
+  var filterReleaseLevel = synthSystem.EGvaluesFilter()[1]
+  synthSystem.egsConfig.filterEG.gateOff(filterReleaseLevel)
   // console.log(keytimeUp)  
 }
 
