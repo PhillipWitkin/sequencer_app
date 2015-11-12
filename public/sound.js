@@ -353,17 +353,19 @@ synthSystem.connectNodes()
 myKeyboard.keyDown = function (note, frequency){
   console.log(note)
   console.log(frequency)
-    
+  // set frequency of pitch oscillators  
   synthSystem.vcosConfig.oscillator.setFrequency(frequency)
   synthSystem.vcosConfig.oscillator2.setFrequency(frequency)
   synthSystem.vcosConfig.oscillator3.setFrequencyWithPortamento(frequency, synthSystem.soundParams.portamento)
+  // turn on volume gate
   synthSystem.egsConfig.EG.gateOn(synthSystem.soundParams.volume)
   // synthSystem.egsConfig.EG.ADSRgateOn(synthSystem.soundParams.volume)
-  var filterEGvalues = synthSystem.EGvaluesFilter()
-  synthSystem.egsConfig.filterEG.gateOn(filterEGvalues[0], filterEGvalues[1])
+  
+  var filterEGvalues = synthSystem.EGvaluesFilter() // compute values for filter envelope
+  synthSystem.egsConfig.filterEG.gateOn(filterEGvalues[0], filterEGvalues[1]) // open filter envelope 
 
   // console.log(keytimeDown)
-  playedNote.push({key: note, pitch: frequency}) 
+  playedNote.push({key: note, pitch: frequency}) // add note to array so it can be used for block input
   // playedFrequency.push(frequency) 
 }
 
@@ -371,6 +373,7 @@ myKeyboard.keyDown = function (note, frequency){
 myKeyboard.keyUp = function (note, frequency){
 
   synthSystem.egsConfig.EG.gateOff()
+  synthSystem.egsConfig.filterEG.gateOff()
   // console.log(keytimeUp)  
 }
 

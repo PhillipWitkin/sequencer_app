@@ -130,17 +130,16 @@ function triggerNote(pitch, duration){
             
     console.log(pitch)
     console.log(duration)
-
+    // set frequency of pitch oscillators
     synthSystem.vcosConfig.oscillator.setFrequency(pitch)
     synthSystem.vcosConfig.oscillator2.setFrequency(pitch)
     // synthSystem.vcosConfig.oscillator3.setFrequency(pitch)
     synthSystem.vcosConfig.oscillator3.setFrequencyWithPortamento(pitch, synthSystem.soundParams.portamento)
  
-    // synthSystem.egsConfig.filterEG.triggerOn(synthSystem.soundParams.filter.stopLevel, duration, synthSystem.soundParams.filter.startLevel)
-    var filterEGvalues = synthSystem.EGvaluesFilter()
-    synthSystem.egsConfig.filterEG.triggerOn(filterEGvalues[0], duration, filterEGvalues[1])
+    var filterEGvalues = synthSystem.EGvaluesFilter() // compute filter envelope values
+    synthSystem.egsConfig.filterEG.triggerOn(filterEGvalues[0], duration, filterEGvalues[1]) // open filter envelope
 
-    synthSystem.egsConfig.EG.triggerOn(synthSystem.soundParams.volume, duration)
+    synthSystem.egsConfig.EG.triggerOn(synthSystem.soundParams.volume, duration) // trigger volume envlope
 }
 
 function animateBlock(number, time){
