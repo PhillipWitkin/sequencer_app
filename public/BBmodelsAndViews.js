@@ -649,8 +649,8 @@ var AmpView = Backbone.View.extend({
   },
 
   showValues: function(){
-    $('#attack-time').val(this.model.get('EGattackTime'))
-    $('#release-time').val(this.model.get('EGreleaseTime'))
+    $('#attack-time').val(this.model.get('EGattackTime') + ' seconds')
+    $('#release-time').val(this.model.get('EGreleaseTime') + ' seconds')
     synthSystem.syncValues()
   }
 })
