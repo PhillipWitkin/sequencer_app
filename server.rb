@@ -425,7 +425,7 @@ put ('/api/sequences/:id') do
   changing_sequence = Sequence.find(params[:id])
 
   # if current_user[:username] != 'guest'
-    changing_sequence.update(
+  if changing_sequence.update(
       sb_1_pitch: params[:sb_1_pitch],
       sb_1_duration: params[:sb_1_duration],
       sb_1_note: params[:sb_1_note],
@@ -491,8 +491,12 @@ put ('/api/sequences/:id') do
       sb_16_note: params[:sb_16_note]
     )
   # end
-  puts params
-  changing_sequence.to_json
+    puts params
+    changing_sequence.to_json
+  else
+    changing_sequence.errors.full_messages.to_json    
+  end
+
 end
 
 #save the current sequence under a new title

@@ -183,8 +183,9 @@ var SequenceLoadCollectionView = Backbone.View.extend({
 var SaveSequenceView = Backbone.View.extend({
 
   events:{
-    'click button[data-action="save-current-sequence"]': 'saveCurrentSequence',
-    'click button[data-action="open-save-sequence-modal"]': 'openModal',
+    'click button[data-action="save-current-sequence"]': 'openSaveCurrentModal',
+    'click button[data-action="save-as-current-sequence"]': 'saveCurrentSequence',
+    'click button[data-action="open-save-sequence-modal"]': 'openSaveNewModal',
     'focus input[data-attr="new-sequence-name"]': 'silence',
     'click button[data-action="save-as-new-sequence"]': 'saveNewSequence',
     'click button[data-action="close-save-modal"]': 'close',
@@ -193,6 +194,16 @@ var SaveSequenceView = Backbone.View.extend({
 
   silence: function(){
     synthSystem.setVolumeMin()
+  },
+
+  openSaveCurrentModal: function(){
+    var $modal = $('#save_current_sequence_modal')
+    var title = '<h4> {{sequence_name}} </h4>'
+    var renderedTitle = Mustache.render(title, this.model.attributes)
+    $('#save_current_title').empty()
+    $('#save-current-error').empty()
+    $('#save_current_title').append(renderedTitle)
+    $modal.modal()
   },
 
   saveCurrentSequence: function(){
@@ -209,10 +220,20 @@ var SaveSequenceView = Backbone.View.extend({
       data: stringifiedModel
     }).done(function(data){
       console.log(data)
+      if (!Array.isArray(data)){
+        // re-sets blocks
+        synthViews.setBlockModel(data, "saveNew")
+        $('#save_current_sequence_modal').modal('hide')      
+      } else {
+        $('#save-current-error').empty()
+        var errors = data.map(function(m){ return {error: m} })
+        var renderedError = Mustache.render("{{#allErrors}}<p>{{error}}</p>{{/allErrors}}</p>", {allErrors: errors})
+        $('#save-current-error').append(renderedError) 
+      }
     })
   },
 
-  openModal: function(){
+  openSaveNewModal: function(){
     synthSystem.setVolumeMin()
     if (this.model.attributes) {
       $('#save_sequence_modal').modal({

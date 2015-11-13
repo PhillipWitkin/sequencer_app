@@ -76,6 +76,7 @@ var EnvelopeGenerator = (function(context) {
     this.attackTime = .3;
     this.decayTime = .1;
 
+    // this.maxLevel = 1
     this.sustainLevel = .4
     
     this.releaseTime = .3;
@@ -118,7 +119,7 @@ var EnvelopeGenerator = (function(context) {
     this.param.cancelScheduledValues(now);
     this.param.setValueAtTime(min || 0, now);
     this.param.linearRampToValueAtTime(max, now + this.attackTime);
-    this.param.setTargetAtTime(this.sustainLevel, now + this.attackTime + this.decayTime, this.decayTime)
+    this.param.setTargetAtTime(this.sustainLevel * max, now + this.attackTime + this.decayTime, this.decayTime)
     return context.currentTime    
   }
 
@@ -129,7 +130,7 @@ var EnvelopeGenerator = (function(context) {
     this.param.cancelScheduledValues(now);
     this.param.setTargetAtTime(min || 0, now, .01);
     this.param.linearRampToValueAtTime(max, now + this.attackTime);
-    this.param.setTargetAtTime(this.sustainLevel, now + this.attackTime + this.decayTime, this.decayTime)
+    this.param.setTargetAtTime(this.sustainLevel * max, now + this.attackTime + this.decayTime, this.decayTime)
     // this.param.setValueAtTime(max, now + this.attackTime + duration/1000)
     this.param.setTargetAtTime(min || 0, now + this.attackTime + this.decayTime + duration/1000, this.releaseTime);
   };
@@ -246,8 +247,8 @@ var SynthSystem = function(){
       filterEG: new EnvelopeGenerator // for filter cutoff
     }
 
-    envelopeGenerators.filterEG.attackTime = .2
-    envelopeGenerators.filterEG.releaseTime = .05
+    envelopeGenerators.filterEG.attackTime = .3
+    envelopeGenerators.filterEG.releaseTime = .3
 
     return envelopeGenerators
   })()
@@ -302,6 +303,7 @@ SynthSystem.prototype.setPortamento = function(milliseconds){
 SynthSystem.prototype.EGvaluesFilter = function(){
   this.egsConfig.filterEG.attackTime = this.soundParams.filterEGattackTime
   this.egsConfig.filterEG.releaseTime = this.soundParams.filterEGreleaseTime
+  // compute max and min levels, returned as an array [max, min]
   return [this.soundParams.filterCutoff * ( 1 + ((this.soundParams.filterEGstopLevel - 1) * this.soundParams.filterEGgain)),
   this.soundParams.filterCutoff * ( 1 + ((this.soundParams.filterEGstartLevel - 1) * this.soundParams.filterEGgain ))]
 }
