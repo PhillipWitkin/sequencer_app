@@ -42,7 +42,13 @@ html, body {
 }
 
 .filter-eg-slider {
-    height:80px; 
+    height:90px; 
     float:left; 
-    margin:20px
+    margin-left:30%;
+}
+
+.filter-eg-labels {
+  text-align: center;
+  /*margin: 0px;*/
+  margin-left: -25%;
 }
