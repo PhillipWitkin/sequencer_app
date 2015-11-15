@@ -461,6 +461,7 @@ var EGfilterView = Backbone.View.extend({
           animate: true,
           orientation: "vertical"
       });
+      self.showGain(sliderId)
     });
     $('#filterEGgain').slider({
       min: -1,
@@ -470,7 +471,7 @@ var EGfilterView = Backbone.View.extend({
       value: self.model.get('filterEGgain'),
       orientation: "horizontal"
     })
-    this.showGain()
+    this.showGain('filterEGgain')
     // this.listenTo(this.model, 'change', 'syncSynth')
   },
 
@@ -487,16 +488,21 @@ var EGfilterView = Backbone.View.extend({
         self.model.set(sliderId, ui.value)
         console.log(ui.value)
         synthSystem.soundParams[sliderId] = ui.value
-        if (sliderId === 'filterEGgain'){
-          self.showGain()
-        }
+        // if (sliderId === 'filterEGgain'){
+        self.showGain(sliderId)
+        // }
       }
     })
   },
 
-  showGain: function(){
+  showGain: function(attr){
     console.log("eg gain changed")
-    $('#eg-gain').val(this.model.get('filterEGgain'))
+    var selector = (attr === 'filterEGgain') ? '#eg-gain' : '[data-id="' + attr + '"]';
+    var value = this.model.get(attr)
+    if (attr==="filterEGattackTime" || attr==="filterEGdecayTime" || attr==="filterEGreleaseTime"){
+      value = value * 1000 + ' ms'
+    }
+    $(selector).val(value)
     // synthSystem.soundParams = this.model.attributes
   }
 

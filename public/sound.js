@@ -125,7 +125,7 @@ var EnvelopeGenerator = (function(context) {
 
   // 'triggers' have no 'off', it is engaged, then runs its course changing the volume
   EnvelopeGenerator.prototype.ADSRtriggerOn = function(max, duration, min) {
-    console.log("EG trigger on")
+    console.log("EG ADSR trigger on")
     now = context.currentTime;
     this.param.cancelScheduledValues(now);
     this.param.setTargetAtTime(min || 0, now, .01);
