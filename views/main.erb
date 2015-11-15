@@ -256,23 +256,33 @@
                       <!-- <label for="filter-eg"> Filter Envelope Generator</label> -->
                       <div id="filter-eg">
                         <div class="row">
-                          <div class="col-xs-3 well">
+                          <div class="col-xs-4 well">
                             <p class="filter-eg-labels">Attack</p>
                             <span class="filter-eg-slider" data-role="filter-eg-slider" id="filterEGattackTime"></span>
                           </div>
-                          <div class="col-xs-3 well">
-                            <p class="filter-eg-labels">Release</p>                          
+                          <div class="col-xs-4 well">
+                            <p class="filter-eg-labels">Decay</p>   
+                            <span class="filter-eg-slider" data-role="filter-eg-slider" id="filterEGdecayTime"></span>
+                          </div>
+                          <div class="col-xs-4 well">
+                            <p class="filter-eg-labels">Release</p> 
                             <span class="filter-eg-slider" data-role="filter-eg-slider" id="filterEGreleaseTime"></span>
                           </div>
-                          <div class="col-xs-3 well">
+                        </div>
+                        <div class="row">
+                          <div class="col-xs-4 well">
                             <p class="filter-eg-labels">Start</p>   
                             <span class="filter-eg-slider" data-role="filter-eg-slider" id="filterEGstartLevel"></span>
                           </div>
-                          <div class="col-xs-3 well">
-                            <p class="filter-eg-labels">Sustain</p>  
+                          <div class="col-xs-4 well">
+                            <p class="filter-eg-labels">Max</p>  
                             <span class="filter-eg-slider" data-role="filter-eg-slider" id="filterEGstopLevel"></span>
                           </div>
-                        </div>
+                          <div class="col-xs-4 well">
+                            <p class="filter-eg-labels">Sustain</p>  
+                            <span class="filter-eg-slider" data-role="filter-eg-slider" id="filterEGsustainLevel"></span>
+                          </div>                          
+                        </div>                        
 
                       </div>
                       <div id="filter-eg-gain">
@@ -313,13 +323,25 @@
                 <div class="well">
                   <label for="amp"> Volume Envelope Generator</label>
                   <div id="amp">
-                    <p class="ui-state-default ui-corner-all ui-helper-clearfix" style="padding:4px;">
-                      <label for="attack-time">Attack Time:</label>
+                    <p class="ui-state-default ui-corner-all ui-helper-clearfix">
+                      <!-- <div class="eg-label"> -->
+                      <label for="attack-time">Attack:</label>
                       <input type="text" id="attack-time" readonly>
+                      <!-- </div> -->
                       <div id="EGattackTime" data-role="eg-slider"></div>
                     </p>
-                    <p class="ui-state-default ui-corner-all ui-helper-clearfix" style="padding:4px;">
-                      <label for="release-time">Release Time:</label>
+                    <p class="ui-state-default ui-corner-all ui-helper-clearfix">
+                      <label for="decay-time">Decay:</label>
+                      <input type="text" id="decay-time" readonly>
+                      <div id="EGdecayTime" data-role="eg-slider"></div>
+                    </p>
+                    <p class="ui-state-default ui-corner-all ui-helper-clearfix">
+                      <label for="sustain-level">Sustain:</label>
+                      <input type="text" id="sustain-level" readonly>
+                      <div id="EGsustainLevel" data-role="eg-slider" data-id="eg-slider-sustain"></div>
+                    </p>          
+                    <p class="ui-state-default ui-corner-all ui-helper-clearfix">
+                      <label for="release-time">Release:</label>
                       <input type="text" id="release-time" readonly>
                       <div id="EGreleaseTime" data-role="eg-slider"></div>
                     </p>
@@ -713,7 +735,8 @@
 <script type="text/javascript" src="./scripts/backbone.js"></script>
 <script type="text/javascript" src="./scripts/mustache.js"></script>
 <script src="./scripts/qwerty-hancock.js"></script>
-<script src="./BBmodelsAndViews.js"></script>
+<script src="./Backbone/models.js"></script>
+<script src="./Backbone/views.js"></script>
 <script src="./sound.js"></script>
 <script src="./app.js"></script>
 

@@ -41,6 +41,10 @@ html, body {
   font-size: 1.75rem;
 }
 
+.eg-label {
+  width: 50%;
+}
+
 .filter-eg-slider {
     height:90px; 
     float:left; 

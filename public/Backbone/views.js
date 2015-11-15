@@ -1,116 +1,4 @@
-console.log("Modles and Views loaded")
-
-var Sequence = Backbone.Model.extend({
-  urlRoot: '/api/sequences'
-})
-
-var SequenceLoadCollection = Backbone.Collection.extend({
-  url: '/api/sequences',
-  model: Sequence
-})
-
-
-// takes Sequence model and prepares it to be played
-var SequencePlay = Sequence.extend({
-  // constructor: function(){
-
-  // },
-  initialize: function(attributes){
-
-      currentSequence = []
-      console.log("play sequence button clicked")
-      //cleaning up sequence model to be used be sequencer
-      var sequenceObject = _.pick(attributes, 
-        "sb_1_pitch", 
-        "sb_1_duration",
-        "sb_2_pitch", 
-        "sb_2_duration",
-        "sb_3_pitch", 
-        "sb_3_duration",
-        "sb_4_pitch", 
-        "sb_4_duration",
-        "sb_5_pitch", 
-        "sb_5_duration",
-        "sb_6_pitch", 
-        "sb_6_duration",
-        "sb_7_pitch", 
-        "sb_7_duration",
-        "sb_8_pitch", 
-        "sb_8_duration",
-        "sb_9_pitch", 
-        "sb_9_duration",
-        "sb_10_pitch", 
-        "sb_10_duration",
-        "sb_11_pitch", 
-        "sb_11_duration",
-        "sb_12_pitch", 
-        "sb_12_duration",
-        "sb_13_pitch", 
-        "sb_13_duration",
-        "sb_14_pitch", 
-        "sb_14_duration",
-        "sb_15_pitch", 
-        "sb_15_duration",
-        "sb_16_pitch", 
-        "sb_16_duration"
-        )
-      //make operations easier by first flattening the object into an array
-      var sequenceArray = _.pairs(sequenceObject)
-      // console.log(sequenceArray)
-
-      //convert the array back to an object with a structure easy for the sequencer to read
-      for (b = 0; b < 32; b+=2){
-        console.log(b)
-        var blockPitch = sequenceArray[b]
-        var blockDuration = sequenceArray[b + 1]
-        // durations are returned by the server as strings representing fractions of traidtional note length,
-        // eg: 1/2, 1/4, 1/8, etc. This value must be split into two, then those two divided for a decimal duration.
-        var blockDurationCalc = blockDuration[1].split('/')   
-        block = {
-          pitch: parseInt(blockPitch[1]),
-          // the duration value is multiplied by 4 to represent 4/4 time, where 1/4 gets 1 beat, so the values scale with the tempo
-          duration: 4 * (parseInt(blockDurationCalc[0]) / parseInt(blockDurationCalc[1])) 
-        }
-        // console.log(block)
-        currentSequence.push(block)
-      }
-
-      this.blocks = currentSequence
-      return currentSequence  
-
-  }
-
-})
-
-
-var Voice = Backbone.Model.extend({
-  defaults: {
-    volume: .7,
-    oscillatorShape: 'square',
-    oscillator2Interval: 12,
-    oscillator2Shape: 'sawtooth',
-    oscillator3Interval: 0,
-    oscillator3Shape: 'triangle',
-    portamento: .05,
-    LFOfrequency: 5,
-    LFOgain: 8,
-    filterCutoff: 2000,
-    filterResonance: 1,
-    filterEGattackTime: .3,
-    filterEGreleaseTime: .3,
-    filterEGstartLevel: .06, // cutoff start controlled by filterEG
-    filterEGstopLevel: 1, // cutoff stop controlled by filter ,
-    filterEGgain: .5,
-    EGattackTime: .3,
-    EGreleaseTime: .3
-  }
-
-  // set: function(attributes, options){
-  //   Backbone.Model.prototype.set.apply(this, arguments)
-  //   synthSystem.soundParams = this.attributes
-  // }
-})
-
+console.log("Views Loaded")
 
 var SequenceLabelView = Backbone.View.extend({
   
@@ -208,17 +96,7 @@ var SaveSequenceView = Backbone.View.extend({
 
   saveCurrentSequence: function(){
     console.log("save current sequence button")
-    stringifiedModel = _.mapObject(this.model.attributes, function(val, key){
-      return val.toString()
-    })
-    // this.model.save(stringifiedModel)
-    var sequenceId = this.model.get('id')
-    console.log(stringifiedModel)
-    $.ajax({
-      method: "PUT",
-      url: 'api/sequences/' + sequenceId,
-      data: stringifiedModel
-    }).done(function(data){
+    this.model.updateSequence().done(function(data){
       console.log(data)
       if (!Array.isArray(data)){
         // re-sets blocks
@@ -235,6 +113,8 @@ var SaveSequenceView = Backbone.View.extend({
 
   openSaveNewModal: function(){
     synthSystem.setVolumeMin()
+    $('input[data-attr="new-sequence-name"]').val('')
+    $('#save-error').empty()
     if (this.model.attributes) {
       $('#save_sequence_modal').modal({
         keyboard: false
@@ -249,16 +129,8 @@ var SaveSequenceView = Backbone.View.extend({
     console.log(newName)
     // var self = this
     this.model.set({sequence_name: newName})
-    var modelWithoutId = _.omit(this.model.attributes, 'id')
-    var stringifiedModel = _.mapObject(modelWithoutId, function(val, key){
-      return val.toString()
-    })
-    console.log(stringifiedModel)
-    $.ajax({
-      method: "POST",
-      url: 'api/sequences',
-      data: stringifiedModel
-    }).done(function(data){
+
+    this.model.createSequence().done(function(data){
       console.log(data)
       loadSequenceCollection.fetch()
       // check to see if the save was sucessful - errors come back as an array
@@ -647,7 +519,15 @@ var AmpView = Backbone.View.extend({
           animate: true,
           orientation: "horizontal"
       });
-    }); 
+    });
+    $('[data-id="eg-slider-sustain"]').slider({
+      value: self.model.get('EGsustainLevel'),
+      min: .01,
+      max: 1,
+      step: .01,
+      animate: true,
+      orientation: 'horizontal'
+    }) 
     this.showValues() 
   },
 
@@ -672,6 +552,8 @@ var AmpView = Backbone.View.extend({
   showValues: function(){
     $('#attack-time').val(this.model.get('EGattackTime') + ' seconds')
     $('#release-time').val(this.model.get('EGreleaseTime') + ' seconds')
+    $('#decay-time').val(this.model.get('EGdecayTime') + ' seconds')
+    $('#sustain-level').val(this.model.get('EGsustainLevel'))
     synthSystem.syncValues()
   }
 })

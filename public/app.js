@@ -137,9 +137,9 @@ function triggerNote(pitch, duration){
     synthSystem.vcosConfig.oscillator3.setFrequencyWithPortamento(pitch, synthSystem.soundParams.portamento)
  
     var filterEGvalues = synthSystem.EGvaluesFilter() // compute filter envelope values
-    synthSystem.egsConfig.filterEG.triggerOn(filterEGvalues[0], duration, filterEGvalues[1]) // open filter envelope
+    synthSystem.egsConfig.filterEG.ADSRtriggerOn(filterEGvalues[0], duration, filterEGvalues[1]) // open filter envelope
 
-    synthSystem.egsConfig.EG.triggerOn(synthSystem.soundParams.volume, duration) // trigger volume envlope
+    synthSystem.egsConfig.EG.ADSRtriggerOn(synthSystem.soundParams.volume, duration) // trigger volume envlope
 }
 
 function animateBlock(number, time){

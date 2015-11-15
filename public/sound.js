@@ -77,7 +77,7 @@ var EnvelopeGenerator = (function(context) {
     this.decayTime = .1;
 
     // this.maxLevel = 1
-    this.sustainLevel = .4
+    this.sustainLevel = .5
     
     this.releaseTime = .3;
 
@@ -303,6 +303,9 @@ SynthSystem.prototype.setPortamento = function(milliseconds){
 SynthSystem.prototype.EGvaluesFilter = function(){
   this.egsConfig.filterEG.attackTime = this.soundParams.filterEGattackTime
   this.egsConfig.filterEG.releaseTime = this.soundParams.filterEGreleaseTime
+  this.egsConfig.filterEG.decayTime = this.soundParams.filterEGdecayTime
+  // compute sustain level - ADSR eg sets sustain as sustain * max (sustain is between 0 and 1), so this value is actual sustain-level / max-level
+  this.egsConfig.filterEG.sustainLevel = ( 1 + ((this.soundParams.filterEGsustainLevel - 1) * this.soundParams.filterEGgain)) / ( 1 + ((this.soundParams.filterEGstopLevel - 1) * this.soundParams.filterEGgain))
   // compute max and min levels, returned as an array [max, min]
   return [this.soundParams.filterCutoff * ( 1 + ((this.soundParams.filterEGstopLevel - 1) * this.soundParams.filterEGgain)),
   this.soundParams.filterCutoff * ( 1 + ((this.soundParams.filterEGstartLevel - 1) * this.soundParams.filterEGgain ))]
@@ -311,6 +314,8 @@ SynthSystem.prototype.EGvaluesFilter = function(){
 SynthSystem.prototype.syncValues = function(){
   this.egsConfig.EG.attackTime = this.soundParams.EGattackTime
   this.egsConfig.EG.releaseTime = this.soundParams.EGreleaseTime
+  this.egsConfig.EG.decayTime = this.soundParams.EGdecayTime
+  this.egsConfig.EG.sustainLevel = this.soundParams.EGsustainLevel
 
   this.vcosConfig.oscillator.oscillator.type = this.soundParams.oscillatorShape
 
@@ -372,11 +377,11 @@ myKeyboard.keyDown = function (note, frequency){
   synthSystem.vcosConfig.oscillator2.setFrequency(frequency)
   synthSystem.vcosConfig.oscillator3.setFrequencyWithPortamento(frequency, synthSystem.soundParams.portamento)
   // turn on volume gate
-  synthSystem.egsConfig.EG.gateOn(synthSystem.soundParams.volume)
-  // synthSystem.egsConfig.EG.ADSRgateOn(synthSystem.soundParams.volume)
+  // synthSystem.egsConfig.EG.gateOn(synthSystem.soundParams.volume)
+  synthSystem.egsConfig.EG.ADSRgateOn(synthSystem.soundParams.volume)
   
   var filterEGvalues = synthSystem.EGvaluesFilter() // compute values for filter envelope
-  synthSystem.egsConfig.filterEG.gateOn(filterEGvalues[0], filterEGvalues[1]) // open filter envelope 
+  synthSystem.egsConfig.filterEG.ADSRgateOn(filterEGvalues[0], filterEGvalues[1]) // open filter envelope 
 
   // console.log(keytimeDown)
   playedNote.push({key: note, pitch: frequency}) // add note to array so it can be used for block input
