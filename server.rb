@@ -245,8 +245,11 @@ class User < ActiveRecord::Base
   
   has_many :sequences
 
+  validates :password, length: { minimum: 5 }
+
   validates :username, presence: true
   validates :username, uniqueness: true
+  validates :username, length: { minimum: 4 }
 
 end
 
