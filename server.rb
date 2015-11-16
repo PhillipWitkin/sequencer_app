@@ -23,126 +23,8 @@ class Sequence < ActiveRecord::Base
     end
   end
 
-  # def self.default_1(user)
-  #   default1 = self.new(
-  #     user_id: user[:id],
-  #     sequence_name: "Octave Shift",
-
-  #     sb_1_pitch: "440",
-  #     sb_1_duration: "1/4",
-  #     sb_1_note: "A4",
-
-  #     sb_2_pitch: "440",
-  #     sb_2_duration: "1/4",
-  #     sb_2_note: "A4",
-
-  #     sb_3_pitch: "880",
-  #     sb_3_duration: "1/4",
-  #     sb_3_note: "A5",
-
-  #     sb_4_pitch: "880",
-  #     sb_4_duration: "1/4",
-  #     sb_4_note: "A5",
-
-  #     sb_5_pitch: "440",
-  #     sb_5_duration: "1/4",
-  #     sb_5_note: "A4",
-
-  #     sb_6_pitch: "440",
-  #     sb_6_duration: "1/4",
-  #     sb_6_note: "A4",
-
-  #     sb_7_pitch: "880",
-  #     sb_7_duration: "1/4",
-  #     sb_7_note: "A5",
-
-  #     sb_8_pitch: "880",
-  #     sb_8_duration: "1/4",
-  #     sb_8_note: "A5",
-
-  #     sb_9_pitch: "440",
-  #     sb_9_duration: "1/4",
-  #     sb_9_note: "A4",
-
-  #     sb_10_pitch: "440",
-  #     sb_10_duration: "1/4",
-  #     sb_10_note: "A4",
-
-  #     sb_11_pitch: "880",
-  #     sb_11_duration: "1/4",
-  #     sb_11_note: "A5",
-
-  #     sb_12_pitch: "880",
-  #     sb_12_duration: "1/4",
-  #     sb_12_note: "A5",
-
-  #     sb_13_pitch: "440",
-  #     sb_13_duration: "1/4",
-  #     sb_13_note: "A4",
-
-  #     sb_14_pitch: "440",
-  #     sb_14_duration: "1/4",
-  #     sb_14_note: "A4",
-
-  #     sb_15_pitch: "880",
-  #     sb_15_duration: "1/4",
-  #     sb_15_note: "A5",
-
-  #     sb_16_pitch: "880",
-  #     sb_16_duration: "1/4",
-  #     sb_16_note: "A5"
-  #   )
-  #   return default1 
-  # end
-
-end
-
-class User < ActiveRecord::Base
-  has_secure_password
-  
-  has_many :sequences
-
-  validates :username, presence: true
-  validates :username, uniqueness: true
-end
-
-# enable :sessions
-set :sessions, true
-
-helpers do
-  def current_user
-    if session[:user_id]
-      @current_user ||= User.find(session[:user_id])
-    else
-      false
-    end
-  end
-
-  def logged_in?
-    current_user.present?
-  end
-end
-
-#login form
-get ('/login') do
-  erb :index
-end
-
-#new user form
-get ('/new_user') do
-  erb :new
-end
-
-#ceate a new username
-post ('/new_user') do
-  user = User.new(
-    username: params[:username],
-    password: params[:password]
-  )
-
-  if user.save
-    #create some stock sequences for the new user
-    Sequence.create(
+  def self.default_1(user)
+    default1 = self.new(
       user_id: user[:id],
       sequence_name: "Octave Shift",
 
@@ -210,8 +92,11 @@ post ('/new_user') do
       sb_16_duration: "1/4",
       sb_16_note: "A5"
     )
+    return default1 
+  end
 
-    Sequence.create(
+  def self.default_2(user)
+    default2 = self.new(
       user_id: user[:id],
       sequence_name: "Default E4",
 
@@ -279,8 +164,10 @@ post ('/new_user') do
       sb_16_duration: "1/4",
       sb_16_note: "E4"
     )
+  end
 
-    Sequence.create(
+  def self.default_3(user)
+    default3 = self.new(
       user_id: user[:id],
       sequence_name: "C Major Scale",
 
@@ -348,11 +235,67 @@ post ('/new_user') do
       sb_16_duration: "1/4",
       sb_16_note: "C4"
     )
+  end
+
+end
+
+
+class User < ActiveRecord::Base
+  has_secure_password
+  
+  has_many :sequences
+
+  validates :username, presence: true
+  validates :username, uniqueness: true
+
+end
+
+# enable :sessions
+set :sessions, true
+
+helpers do
+  def current_user
+    if session[:user_id]
+      @current_user ||= User.find(session[:user_id])
+    else
+      false
+    end
+  end
+
+  def logged_in?
+    current_user.present?
+  end
+end
+
+#login form
+get ('/login') do
+  erb :index
+end
+
+#new user form
+get ('/new_user') do
+  erb :new
+end
+
+#ceate a new username
+post ('/new_user') do
+  password_1, password_2 = params[:password_1], params[:password_2]
+  password = password_2 if password_1 == password_2
+  user = User.new(
+    username: params[:username],
+    password: password
+  )
+
+  if user.save
+    new_sequence1, new_sequence2, new_sequence3 = Sequence.default_1(user), Sequence.default_2(user), Sequence.default_3(user)
+    new_sequence1.save()
+    new_sequence2.save()
+    new_sequence3.save()
 
     redirect "/login"
   else
-        # @message = "That's not gonna fly"
-    @message = user.errors.full_messages[0]
+          # @message = "That's not gonna fly"
+    @message = password ? user.errors.full_messages[0] : 'Passwords did not match' 
     erb :new
   end
 
