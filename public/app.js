@@ -130,6 +130,7 @@ function triggerNote(pitch, duration){
             
     console.log(pitch)
     console.log(duration)
+    soundingPitch = pitch
     // set frequency of pitch oscillators
     synthSystem.vcosConfig.oscillator.setFrequency(pitch)
     synthSystem.vcosConfig.oscillator2.setFrequency(pitch)

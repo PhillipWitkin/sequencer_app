@@ -632,7 +632,7 @@ var OscillatorView = Backbone.View.extend({
   events: {
     'slide [data-role="VCO-interval-slider"]':'inputValue',
     'click [data-role="VCO-interval-slider"]':'inputValue',
-    'click [data-role="shape-select"]':'selectShape'
+    'change [data-role="shape-select"]':'selectShape'
   },
 
   inputValue: function(){
@@ -657,19 +657,25 @@ var OscillatorView = Backbone.View.extend({
     $(selector).val(value)//for wave shape and interval
     synthSystem.soundParams[attribute] = this.model.get(attribute)
     synthSystem.syncValues()
-    // this.changeIntervals()
+    this.changeIntervals()
   },
 
-  selectShape: function(){
-    var value = $('[data-role="shape-select"]').val()
-    var attribute = $('[data-role="shape-select"]').attr("id")
+  selectShape: function(event){
+    var attribute = event.target.id
+    console.log(attribute)
+    var value = $('#'+attribute).val()
+    console.log(value)
+    // var value = selection.attr("data-id")
+    // var attribute = selection.attr("id")
+    // console.log(value)
+    // console.log(attribute)
     this.model.set(attribute, value)
     this.showValue(attribute)
   },
 
   changeIntervals: function(){
-    synthSystem.vcosConfig.oscillator2.changeInterval(synthSystem.soundParams.oscillator2Interval)
-    // synthSystem.vcosConfig.oscillator3.setFrequencyWithPortamento(synthSystem.vcosConfig.oscillator3.oscillator.frequency.value / Math.pow(Math.pow(2, 1/12), this.model.get('oscillator3Interval')))
+    synthSystem.vcosConfig.oscillator2.setFrequency(soundingPitch ? soundingPitch : 440)
+    synthSystem.vcosConfig.oscillator3.setFrequency(soundingPitch ? soundingPitch : 440)
   }
 
 })

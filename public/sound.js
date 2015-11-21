@@ -60,11 +60,11 @@ var VCA = (function(context) {
   }
 
   VCA.prototype.connect = function(node){
-    // if (node.hasOwnProperty('input')) {
-    //   this.output.connect(node.input);
-    // } else {
-    //   this.output.connect(node);
-    // };
+    if (node.hasOwnProperty('input')) {
+      this.output.connect(node.input);
+    } else {
+      this.output.connect(node);
+    };
     this.output.connect(node)
   }
 
@@ -163,6 +163,11 @@ var BQF = (function(context) {
   }
 
   BQF.prototype.connect = function(node) {
+    if (node.hasOwnProperty('input')) {
+      this.output.connect(node.input);
+    } else {
+      this.output.connect(node);
+    };
     this.output.connect(node)
   }
 
@@ -189,7 +194,53 @@ var BQF = (function(context) {
 })(context)
 
 
+var Delay = (function(context){
 
+  function Delay(){
+    this.delay = context.createDelay()
+    this.delay.delayTime.value = .5
+  
+    this.feedback = new VCA()
+    this.feedback.volume.gain.value = .5
+
+    this.compressor = context.createDynamicsCompressor()
+
+    this.input = new VCA()
+    this.input.volume.gain.value = 1
+  }
+
+  // var routeDelayComponents = (function(){
+
+  // })()
+
+  Delay.prototype.connect = function(node){
+    // if (node.hasOwnProperty('input')) {
+    //   this.output.connect(node.input);
+    // } else {
+    //   this.output.connect(node);
+    // };
+    this.input.connect(this.delay)
+    this.input.connect(this.compressor)
+
+    this.delay.connect(this.feedback.volume)
+    this.delay.connect(this.compressor)
+    
+    this.feedback.connect(this.delay)
+
+    this.input.connect(node)
+    this.compressor.connect(node)
+  }
+
+  Delay.prototype.changeDelayTime = function(delayTime, interval){
+
+  }
+
+  Delay.prototype.setFeedbackLevel = function(level){
+
+  }
+
+  return Delay
+})(context)
 
 
 // constructor function which designates and groups the relevant parts of the synthesizer
@@ -219,7 +270,7 @@ var SynthSystem = function(){
     }
     amplifers.oscillator1gain.volume.gain.value = 1
     amplifers.oscillator2gain.volume.gain.value = 1
-    amplifers.oscillator3gain.volume.gain.value = 1
+    amplifers.oscillator3gain.volume.gain.value = 1    
 
     return amplifers
   })()
@@ -261,6 +312,33 @@ var SynthSystem = function(){
     return lowPassFilter
   })()
 
+  this.DelayConfig = (function(){
+
+    var components = {
+      delay: new Delay()
+      // feedback: new VCA()
+    }
+ 
+    return components
+  })()
+
+  // this.mixerConfig = (function(){
+
+  //   // var mixerIn = {
+  //     // ch1 = this.vcasConfig.oscillator1gain
+  //     ch2 = this.vcasConfig.oscillator2gain
+  //     ch3 = this.vcasConfig.oscillator3gain
+  //   // }
+    
+  //   var mixerOut = new VCA()
+  //   mixerOut.volume.gain.value = 1
+  //   ch1.connect(mixerOut.volume)
+  //   ch2.connect(mixerOut.volume)
+  //   ch3.connect(mixerOut.volume)
+
+  //   return mixerOut
+  // })()
+
   // shortcut to keep track of common params; fed into components as arguments
   this.soundParams = new Voice().attributes
 
@@ -284,7 +362,10 @@ SynthSystem.prototype.connectNodes = function(){
   // this.vcasConfig.vca.connect(context.destination)  // route vca to output
   this.egsConfig.filterEG.connect(this.filtersConfig.LPF.filter.frequency) // eg to modulate filter
   this.vcasConfig.vca.connect(this.filtersConfig.LPF.filter)  // route vca to filter
-  this.filtersConfig.LPF.connect(context.destination) // route filter to output
+  // this.filtersConfig.LPF.connect(context.destination) // route filter to output
+  this.filtersConfig.LPF.connect(this.DelayConfig.delay.input.volume)
+  
+  this.DelayConfig.delay.connect(context.destination)
 }
 
 SynthSystem.prototype.setVolumeMin = function(){
@@ -348,6 +429,8 @@ var sequenceTest = [
 
 // array of objects for data on all clicked notes 
 var playedNote = []
+// whatever pitch is currently being played, either by the keyboard 
+var soundingPitch
 // var playedFrequency = []
 var maxVolume = 1
 
@@ -372,6 +455,7 @@ var myKeyboard = new QwertyHancock({
 myKeyboard.keyDown = function (note, frequency){
   console.log(note)
   console.log(frequency)
+  soundingPitch = frequency
   // set frequency of pitch oscillators  
   synthSystem.vcosConfig.oscillator.setFrequency(frequency)
   synthSystem.vcosConfig.oscillator2.setFrequency(frequency)
