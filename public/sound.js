@@ -201,7 +201,7 @@ var Delay = (function(context){
     this.delay.delayTime.value = .5
   
     this.feedback = new VCA()
-    this.feedback.volume.gain.value = .5
+    this.feedback.volume.gain.value = 0 // temporarily disabled, should be .5
 
     this.compressor = context.createDynamicsCompressor()
 
@@ -228,7 +228,7 @@ var Delay = (function(context){
     this.feedback.connect(this.delay)
 
     this.input.connect(node)
-    this.compressor.connect(node)
+    // this.compressor.connect(node)// temporarily disabled 
   }
 
   Delay.prototype.changeDelayTime = function(delayTime, interval){
